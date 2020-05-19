@@ -1,0 +1,216 @@
+body {
+    display: block;
+    margin: 0;
+}
+
+.inventoryBody {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.25);
+    width: 100%;
+    height: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0);
+}
+   
+::-webkit-scrollbar-thumb {
+    background-color: white; 
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(190, 190, 190); 
+}
+
+.inventory {
+    height: 60%;
+    width: 37.5%;
+    border: none;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+.inventorybox {
+    display: inline-block;
+    height: 29%;
+    width: 18.6%;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    margin-left: 0.5%;
+    margin-top: 0.3%;
+    background-color: rgba(65, 73, 90, 0.349);
+    /*background-image: url(cursor.png);*/
+    background-size: 100%;
+    background-repeat: no-repeat;
+    vertical-align: bottom;
+    position: relative;
+    background-position: 3px 15px;
+}
+
+.button {
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: white;
+    width: 10%;
+    height: 4%;
+    background-color: rgba(65, 73, 90, 0.349);
+    margin-left: 44.3%;
+    margin-top: 20%;
+    position: absolute;
+    border: none;
+    outline-color: rgba(65, 73, 90, 0.5);
+}
+
+.inventorybox:hover {
+    background-color: rgba(65, 73, 90, 0.5);
+}
+
+.itemtext {
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: white;
+    padding-top: 4%;
+    padding-bottom: 3%;
+    font-size: 70%;
+    width: 100%;
+    height: 11%;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    bottom: 0;
+}
+
+.weightCount {
+    float: right;
+    clear: right;
+    margin-top: 4%;
+    margin-right: 4%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 80%;
+    color: white;
+    font-weight: bold;
+}
+
+.nameTotalWeight {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 150%;
+    font-weight: 530;
+}
+
+#quickSlotInfo {
+    position: absolute;
+    width: 135px;
+    height: 190px;
+    margin-left: 46%;
+    margin-top: 40%;
+    animation: fade 2s linear forwards;
+}
+
+#description {
+    display: none;
+    position: absolute;
+    width: 30%;
+    height: 17%;
+    margin-left: 33.5%;
+    margin-top: 44.2%;
+    padding: 1%;
+}
+
+#itemName {
+    border-bottom: 2px solid white;
+    padding-bottom: 1%;
+    font-weight: bold;
+}
+
+#itemInfo {
+    margin-top: 3%;
+    font-size: 100%;
+    line-height: 140%;
+}
+
+#player {
+    margin-top: 3.5%;
+    margin-left: 5.2%;
+    position: absolute;
+    font-weight: 530;
+}
+
+#personalTotalWeight {
+    position: absolute;
+    font-size: 75%;
+    margin-top: 6%;
+    margin-left: 5.2%;
+}
+
+#external {
+    margin-top: 3.5%;
+    margin-left: 57.7%;
+    position: absolute;
+}
+
+#externalTotalWeight {
+    position: absolute;
+    font-size: 75%;
+    font-weight: 200;
+    margin-top: 6%;
+    margin-left: 57.7%;
+}
+
+#use {
+    margin-top: 25%;
+    padding-top: 1%;
+}
+
+#use:hover {
+    background-color: rgba(65, 73, 90, 0.5);
+}
+
+#quantity {
+    height: 6%;
+}
+
+#personalInventory {
+    float: left;
+    clear: left;
+    margin-left: 5%;
+    margin-top: 8%;
+}
+
+#externalInventory {
+    float: right;
+    clear: right;
+    margin-right: 5%;
+    margin-top: 8%;
+}
+
+.quickSlot {
+    height: 14%;
+    padding-left: 4%;
+    padding-right: 4%;
+    padding-top: 4%;
+    text-align: center;
+    background-color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 85%;
+    font-weight: bold;
+    clear: left;
+    position: relative;
+    display: inline-block;
+}
+
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+
+    10%, 90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

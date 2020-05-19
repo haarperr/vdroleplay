@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" media="screen" href="style.css">
+        <script src="nui://game/ui/jquery.js"></script>
+    </head>
+    <body class="body">
+        <script src="app.js"></script>
+        <div class="rect"></div>
+        
+        <div class="charbox">
+            <div class="text" id="charinfo">
+                <img src="data:image/png;base64,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" style="max-width: 20px; color:white;"></img>
+                Karakter Informatie
+            </div>
+
+            <div class="chartext" id="selectchar">Selecteer of maak een karakter <br> om informatie over dat karakter te zien</div>
+
+            <div id="charinfotext">
+                <div class="chartext" id="name">Naam:</div>
+                <div class="chartext" id="dateOfBirth">Geboortedatum:</div>
+                <div class="chartext" id="gender">Geslacht:</div>
+                <div class="chartext" id="nationalityInfo">Nationaliteit:</div>
+                <div class="chartext" id="job">Baan:</div>
+                <div class="chartext" id="cash">Cash:</div>
+                <div class="chartext" id="bank">Bank:</div>
+
+                <div class="chartext" id="phone">Telefoonnummer:</div>
+                <div class="chartext" id="account">Rekeningnummer:</div>
+            </div>
+        </div>
+
+        <div class="createChar">
+            <label for="firstName" class="createText" id="firstNameLabel">Voornaam</label>
+            <input type="text" class="input" id="firstName" required>
+
+            <label for="lastName" class="createText" id="lastNameLabel">Achternaam</label>
+            <input type="text" class="input" id="lastName" required>
+
+            <label for="birthDate" class="createText" id="birthDateLabel">Geboortedatum</label>
+            <input type="date" class="input" id="birthDate" required>
+
+            <label for="sex" class="createText" id="sexLabel">Geslacht</label>
+            <select class="input" id="sex">
+                <option id="man" value="man">Man</option>
+                <option id="woman" value="woman">Vrouw</option>
+            </select>
+
+            <label for="nationality" class="createText" id="nationalityLabel">Nationaliteit</label>
+            <input type="text" class="input" id="nationality" required>
+
+            <button class="input" id="confirmButton" onclick="confirmChar()"><span>Bevestig</span></button>
+            <button class="input" id="cancelButton" onclick="cancelCreateChar()"><span>Annuleren</span></button>
+        </div>
+
+        <div class="charbuttons">
+            <div class="text" id="mychars">Mijn Karakters</div>
+            <button class="button" id="1" onclick="onClick(this.id)"><span>Leeg Karakterslot</span><span id="citizenid">CITIZENID</span></button>
+            <button class="button" id="2" onclick="onClick(this.id)"><span>Leeg Karakterslot</span><span id="citizenid">CITIZENID</span></button>
+            <button class="button" id="3" onclick="onClick(this.id)"><span>Leeg Karakterslot</span><span id="citizenid">CITIZENID</span></button>
+            <button class="button" id="4" onclick="onClick(this.id)"><span>Leeg Karakterslot</span><span id="citizenid">CITIZENID</span></button>
+            <button class="button" id="5" onclick="onClick(this.id)"><span>Leeg Karakterslot</span><span id="citizenid">CITIZENID</span></button>
+        </div>
+
+        <div class="options">
+            <button class="selectbutton" id="create" onclick="createChar()"><span>Karakter maken</span></button>
+            <button class="selectbutton" id="play" onclick="playChar()"><span>Spelen</span></button>
+            <button class="selectbutton" id="delete" onclick="deleteChar()"><span>Verwijderen</span></button>
+        </div>
+    </body>
+</html>

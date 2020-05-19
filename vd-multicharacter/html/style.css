@@ -1,0 +1,260 @@
+.rect {
+    height: 50px;
+    padding: 0px;
+    white-space: pre;
+    width: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.body {
+    margin: 0;
+    display: none;
+}
+
+.button {
+    height: 85px;
+    width: 500px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: none;
+    -webkit-text-fill-color: white;
+    margin-top: 20px;
+    margin-left: 150px;
+    padding: 0.6%;
+    padding-left: 2%;
+    padding-right: 1%;
+    border-radius: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    text-align: left;
+    float: left;
+    clear: left;
+}
+
+.options {
+    height: 42.5px;
+    width: 500px;
+    margin-top: 20px;
+    margin-left: 150px;
+    float: left;
+    clear: left;
+}
+
+.createChar {
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 20%;
+    height: 22%;
+    margin-left: 40.5%;
+    padding: 5px;
+    margin-top: 15%;
+    float: left;
+    clear: left;
+    position: absolute;
+    border-radius: 5px;
+    border: 2px solid rgb(155, 4, 4);
+    display: none;
+}
+
+.createText {
+    float: left;
+    clear: both;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    margin-top: 1%;
+}
+
+.input {
+    border-radius: 5px;
+    outline: 0;
+    width: 40%;
+    margin-left: 5%;
+    margin-top: 6%;
+    border: 2px solid rgb(155, 4, 4);
+    background-color: inherit;
+    caret-color: white;
+    padding: 2px;
+    color: white;
+    clear: both;
+    text-align: center;
+}
+
+.input:active {
+    background-color: black;
+}
+
+.selectbutton {
+    width: 50%;
+    height: 100%;
+    float: left;
+    border-radius: 5px;
+    border: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+    -webkit-text-fill-color: white;
+    outline: 0;
+    display: none;
+}
+
+.text {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 150px;
+    margin-left: 330px;
+    margin-bottom: 20px;
+}
+
+.charbox {
+    background-color: rgba(0, 0, 0, 0.5);
+    margin-top: 140px;
+    height: 70%;
+    width: 25%;
+    float: right;
+    text-align: center;
+    margin-right: 150px;
+}
+
+.button:focus {
+    outline: 0;
+}
+
+.chartext {
+    border-style: none none solid none;
+    border-bottom: 4px solid white;
+    width: 97%;
+    text-align: left;
+    padding-left: 3%;
+    padding-bottom: 1%;
+    padding-top: 3%;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+#confirmButton {
+    float: left;
+    clear: left;
+}
+
+#cancelButton {
+    float: right;
+    clear: right;
+    margin-right: 5%;
+}
+
+#nationality {
+    float: left;
+    clear: left;
+    margin-top: 1%;
+    width: 90%;
+}
+
+#nationalityLabel {
+    margin-left: 5%;
+    margin-top: 5%;
+}
+
+#sex {
+    float: left;
+    clear: left;
+    margin-top: 1%;
+    margin-bottom: 0;
+}
+
+#birthDate{
+    float: right;
+    clear: right;
+    margin-top: 1%;
+    margin-right: 5%;
+}
+
+#birthDateLabel {
+    float: right;
+    clear: right;
+    margin-right: 17.5%;
+    margin-top: 4%;
+}
+
+#sexLabel {
+    float: left;
+    clear: left;
+    margin-top: -4.5%;
+    margin-left: 5%;
+}
+
+#lastNameLabel {
+    float: right;
+    margin-left: 9.5%;
+    position: absolute;
+}
+
+#firstNameLabel {
+    margin-left: 5%;
+    position: absolute;
+}
+
+#lastName {
+    margin-left: 9%;
+}
+
+#phone {
+    padding-top: 12%;
+}
+
+#citizenid {
+    float: right;
+    clear: right;
+    margin-right: 2%;
+    display: none;
+}
+
+#charinfotext {
+    display: none;
+    text-align: center;
+    text-align: bottom;
+}
+
+#charinfo {
+   margin-left: 0;
+   margin-top: 5%;
+   margin-bottom: 15%;
+}
+
+#selectchar {
+    border: none;
+    text-align: center;
+}
+
+#play:active {
+    background-color: rgba(87, 177, 34, 0.7);
+}
+
+#play {
+    width: 48%;
+    background-color: rgba(97, 247, 38, 0.7);
+}
+
+#delete:active {
+    background-color: rgba(161, 30, 30, 0.7);
+}
+
+#delete {
+    width: 48%;
+    background-color: rgba(247, 38, 38, 0.7);
+    float: right;
+}
+
+#create {
+    position: absolute;
+    height: 42.5px;
+    width: 500px;
+    display: none;
+    background-color: rgba(97, 247, 38, 0.7);
+}
+
+#create:active {
+    background-color: rgba(87, 177, 34, 0.7);
+}

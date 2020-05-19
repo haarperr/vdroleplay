@@ -1,0 +1,35 @@
+.notification {
+    background-color: rgb(34, 122, 190);
+    -webkit-text-fill-color: white;
+    clear: right;
+    float: right;
+    margin-top: 20px;
+    margin-right: 200px;
+    padding: 0.6%;
+    padding-left: 1%;
+    padding-right: 1%;
+    border-radius: 7px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 15px;
+
+    animation: fade 10s linear forwards;
+}
+
+#first{
+    margin-top: 50px;
+}
+
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+
+    5%, 95% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

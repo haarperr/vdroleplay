@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" media="screen" href="style.css">
+        <script src="nui://game/ui/jquery.js"></script>
+
+        <script src="../items/items.js"></script>
+
+        <script src="app.js"></script>
+    </head>
+    <body>
+
+        <div class="inventoryBody" onkeyup="closeInv(event)">
+            <div class="nameTotalWeight">
+                <div id="player">Player Inventory</div>
+                <div id="external">Ground</div>
+                <div id="personalTotalWeight"></div>
+                <div id="externalTotalWeight"></div>
+            </div>
+        
+        
+            <div class="useButtons">
+                <input class="button" id="quantity" value="0">
+                <div class="button" id="use" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    USE
+                </div>
+            </div>
+        
+            <div class="inventory" id="personalInventory">
+            </div>
+        
+            <div class="inventory" id="externalInventory">
+        
+            </div>
+        
+            <div id="description">
+                <div class="nameTotalWeight" id="itemName">Carbine Rifle</div>
+                <div class="nameTotalWeight" id="itemInfo">Mooi wapentje hoor <br>Serienummer: dahusad</div>
+            </div>
+        </div>
+    </body>
+</html>
