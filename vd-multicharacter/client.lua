@@ -45,7 +45,7 @@ end
 
 RegisterCommand('char', function() 
     EnableCharUI()
-    VDCore.Notify('test')
+    TriggerEvent('vd-inventory:client:clearInv')
 end, false)
 
 RegisterCommand('off', function() 
@@ -71,6 +71,8 @@ RegisterNUICallback("playChar", function(data)
     TriggerServerEvent('vd-multicharacter:getCurrentPlayerData', GetPlayerServerId(PlayerId()), data.charSlot)
     DisableCharUI()
     SetEntityCoords(PlayerPedId(), 195.08, -933.82, 30.68, false, false, false, true)
+    Wait(500)
+    TriggerServerEvent('vd-inventory:server:getInventory', VDCore.PlayerData.citizenID)
 end)
 
 RegisterNUICallback("deleteChar", function(data) 

@@ -12,6 +12,8 @@ Citizen.CreateThread(function()
     end
 end)
 
+
+
 --Scoreboard
 Citizen.CreateThread(function() 
     isControlBeingHeld = false;

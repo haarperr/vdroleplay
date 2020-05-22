@@ -29,26 +29,27 @@ function OnPlayerConnecting(name, setKickReason, deferrals)
         deferrals.done("You are not connected to Steam.")
     else
         deferrals.done()
+
+        MySQL.Async.fetchAll("SELECT * FROM `vd-permissions` WHERE steam64 = @steam64", {["@steam64"] = steamIdentifier},
+        function(result) 
+            if result[1] == nil then
+                MySQL.Async.fetchAll("INSERT INTO `vd-permissions` (name, steam64, permlevel) VALUES(@name, @steamidentifier, @permlevel)", {["@name"] = name, ["@steamidentifier"] = steamIdentifier, ["@permlevel"] = "user"}, 
+                function(result) 
+                    print("^2[VD-LOG] ^7Sucessfully inserted new player '" .. name .. "' into the database")
+                end)
+            else 
+                if result[1].name ~= name then
+                    MySQL.Async.fetchAll("UPDATE `vd-permissions` SET name = @name WHERE steam64 = @steam64", {['@name'] = name, ["@steam64"] = steamIdentifier}, function(result) 
+                        print("^2[VD-LOG] ^7Successfully updated steam name")
+                    end)
+                else
+                    print("^2[VD-LOG] ^7Sucessfully got player permission data")        
+                end
+            end
+        end)
     end
 
-    MySQL.Async.fetchAll("SELECT * FROM `vd-permissions` WHERE steam64 = @steam64", {["@steam64"] = steamIdentifier},
-    function(result) 
-        if result[1] == nil then
-            MySQL.Async.fetchAll("INSERT INTO `vd-permissions` (name, steam64, permlevel) VALUES(@name, @steamidentifier, @permlevel)", {["@name"] = name, ["@steamidentifier"] = steamIdentifier, ["@permlevel"] = "user"}, 
-            function(result) 
-                print("^2[VD-LOG] ^7Sucessfully inserted new player '" .. name .. "' into the database")
-            end)
-        else 
-            if result[1].name ~= name then
-                MySQL.Async.fetchAll("UPDATE `vd-permissions` SET name = @name WHERE steam64 = @steam64", {['@name'] = name, ["@steam64"] = steamIdentifier}, function(result) 
-                    print("^2[VD-LOG] ^7Successfully updated steam name")
-                end)
-            else
-                print("^2[VD-LOG] ^7Sucessfully got player permission data")
-                
-            end
-        end
-    end)
+    
 end
 
 AddEventHandler("playerConnecting", OnPlayerConnecting)

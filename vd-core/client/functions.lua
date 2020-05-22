@@ -54,6 +54,17 @@ VDCore.loadAnim = function(dict)
 	end
 end
 
+VDCore.getClosestVehicle = function(radius) 
+    local pos = GetEntityCoords(GetPlayerPed(-1))
+    local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, radius, 0.0)   
+    local rayHandle = CastRayPointToPoint(pos.x, pos.y, pos.z, entityWorld.x, entityWorld.y, entityWorld.z, 10, GetPlayerPed(-1), 0)
+    local _, _, _, _, vehicleHandle = GetRaycastResult(rayHandle)
+
+    --print(vehicleHandle)
+    --print(GetVehicleNumberPlateText(vehicleHandle))
+    return vehicleHandle
+end
+
 VDCore.isRagdoll = false
 VDCore.setPedRagdoll = function(bool) 
     if bool then
@@ -148,7 +159,6 @@ AddEventHandler('vd-multicharacter:recieveCurrentPlayerData', function(data)
     VDCore.PlayerData.phoneNumber = data.phoneNumber
     VDCore.PlayerData.accountNumber = data.accountNumber
     VDCore.PlayerData.citizenID = data.citizenID
-    print(VDCore.PlayerData.citizenID)
 end)
 
 RegisterNetEvent('vd-core:recievePermissionData')
