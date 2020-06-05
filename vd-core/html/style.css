@@ -1,3 +1,7 @@
+body {
+    padding-top: 50px;
+}
+
 .notification {
     background-color: rgb(34, 122, 190);
     -webkit-text-fill-color: white;
@@ -14,10 +18,6 @@
     font-size: 15px;
 
     animation: fade 10s linear forwards;
-}
-
-#first{
-    margin-top: 50px;
 }
 
 @keyframes fade {

@@ -84,59 +84,9 @@ RegisterCommand('id', function(source, args)
     VDCore.chatNotify('normal', 'ID: ' .. GetPlayerServerId(source))
 end, false)
 
-activated = false
-mainCam = 0
-local ogX, ogY, ogZ = { 0, 0, 0 }
 RegisterCommand('test', function(source, args)
-    pid = PlayerPedId()
-    print(table.unpack(GetEntityRotation(PlayerPedId())))
-    print(table.unpack(GetGameplayCamCoord()))
-    print(GetGameplayCamFov())
-    print(GetEntityCoords(pid))
-    print(GetEntityHeading(pid))
-
-    if not activated then
-        ogX, ogY, ogZ = table.unpack(GetEntityCoords(pid))
-        Wait(10)
-
-        x, y, z = table.unpack(GetEntityCoords(pid))
-        --SetEntityCoords(pid, x, y, z + 140.0, false, false, false, true)
-        --FreezeEntityPosition(pid, true)
-        --SetEntityVisible(pid, false, false)
-
-        Wait(1)
-
-        activated = true
-        mainCam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
-        RenderScriptCams(true, 1, 0, true, true)
-    else
-        --SetEntityCoords(pid, ogX, ogY, ogZ, false, false, false, true)
-        FreezeEntityPosition(pid, false)
-        activated = false
-        RenderScriptCams(false, 1, 0,  true,  true)
-        SetEntityVisible(pid, true, false)
-        DestroyCam(mainCam, false)
-    end
-
-    processCamera(mainCam)
-
+    VDCore.createObject('prop_boxpile_06b')
 end, false)
-
-function processCamera(cam)
-	--local rotx, roty, rotz = table.unpack(GetEntityRotation(PlayerPedId()))
-	--local camX, camY, camZ = table.unpack(GetGameplayCamCoord())
-    --local camRX, camRY, camRZ = GetGameplayCamRelativePitch(), 0.0, GetGameplayCamRelativeHeading()
-    local rotx, roty, rotz = 0.0, 0.0, -39.740
-	local camX, camY, camZ = 3061.670, 2116.9899, 2.71193
-	local camF = 50.0
-	--local camRZ = (rotz+camRZ)
-	
-    SetCamCoord(cam, camX, camY, camZ)
-    SetCamRot(cam, rotx, roty, rotz)
-	--SetCamRot(cam, -90.0, 0.0, 0.0)
-    SetCamFov(cam, camF)
-
-end
 
 RegisterNetEvent('vd-core:sendChatMessage')
 AddEventHandler('vd-core:sendChatMessage', function(type, author, message) 

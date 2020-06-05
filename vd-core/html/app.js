@@ -2,10 +2,6 @@ function notify(text) {
     var notification = document.createElement("div");
     notification.className = "notification";
 
-    if(document.getElementById("first") == null) {
-        notification.setAttribute("id", "first");
-    }
-
     notification.innerHTML = text;
     document.body.appendChild(notification);
 

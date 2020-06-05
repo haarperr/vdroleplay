@@ -129,6 +129,20 @@ VDCore.table_has_value = function(tab, val)
     return false
 end
 
+VDCore.playAnim = function(animDict, animName, duration, flag) 
+    VDCore.loadAnim(animDict)
+    TaskPlayAnim(PlayerPedId(), animDict, animName, 4.0, 1.0, duration, flag, 0, 0, 0, 0 )
+    RemoveAnimDict(animDict)
+end
+
+VDCore.startProgressbar = function(title, duration, func) 
+    TriggerEvent('vd-progressbar:client:startProgressBar', title, duration, func)
+end
+
+VDCore.consumeLatestUsedItem = function() 
+    TriggerEvent('vd-inventory:client:consumeItem')
+end
+
 VDCore.sendMessage = function(title, text, r, g, b)
     TriggerEvent('chat:addMessage', {
         args = {title, text},
@@ -145,6 +159,29 @@ VDCore.chatNotify = function(type, message)
     end
 end
 
+VDCore.createObject = function(object_model) 
+    Citizen.CreateThread(function()
+        RequestModel(object_model)
+        local requestWait = 1
+
+        while not HasModelLoaded(object_model) and requestWait < 5 do
+            Citizen.Wait(500)				
+            requestWait = requestWait + 1
+        end
+
+        if not HasModelLoaded(object_model) then
+            SetModelAsNoLongerNeeded(object_model)
+            VDCore.Notify('Loading Model took too long')
+        else
+            local ped = PlayerPedId()
+            local x,y,z = table.unpack(GetEntityCoords(ped))
+            local created_object = CreateObjectNoOffset(object_model, x, y, z, 1, 0, 1)
+            PlaceObjectOnGroundProperly(created_object)
+            SetModelAsNoLongerNeeded(object_model)
+        end
+    end)
+end
+
 RegisterNetEvent('vd-multicharacter:recieveCurrentPlayerData')
 AddEventHandler('vd-multicharacter:recieveCurrentPlayerData', function(data) 
     VDCore.PlayerData = {}
@@ -159,9 +196,4 @@ AddEventHandler('vd-multicharacter:recieveCurrentPlayerData', function(data)
     VDCore.PlayerData.phoneNumber = data.phoneNumber
     VDCore.PlayerData.accountNumber = data.accountNumber
     VDCore.PlayerData.citizenID = data.citizenID
-end)
-
-RegisterNetEvent('vd-core:recievePermissionData')
-AddEventHandler('vd-core:recievePermissionData', function(data) 
-    
 end)

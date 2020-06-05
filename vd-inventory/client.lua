@@ -24,6 +24,12 @@ RegisterCommand('giveitem', function(source, args)
     end
 end, false)
 
+RegisterCommand('clearinv', function(source, args) 
+    SendNUIMessage({
+        type = "clearInventory"
+    })
+end, false)
+
 RegisterNUICallback('dropItem', function(data) 
     local stash = {x = "0.0", y = "0.0", z = "0.0", contents = "", id = "", occupied = true}
     stash.contents = data.contents
@@ -72,6 +78,10 @@ RegisterNUICallback('saveInventory', function(data)
     TriggerServerEvent('vd-inventory:server:saveInventory', VDCore.PlayerData.citizenID, data.contents)
 end)
 
+RegisterNUICallback('useThermite', function(data) 
+    TriggerEvent('qb-atmrobbery:client:plantThermite')
+end)
+
 RegisterNUICallback('useWeapon', function(data) 
     pid = PlayerPedId()
     animDict = 'reaction@intimidation@1h'
@@ -117,23 +127,24 @@ RegisterCommand('clearinv', function()
     SendNUIMessage({
         type = "clearInventory"
     })
+    VDCore.Notify('Inventory cleared!')
 end)
 
 RegisterNUICallback('error', function(data) 
     VDCore.chatNotify('error', data.message)
 end)
 
-RegisterNetEvent('vd-inventory:client:clearInv')
-AddEventHandler('vd-inventory:client:clearInv', function() 
-    SendNUIMessage({
-        type = "clearInventory"
-    })
-end)
-
 RegisterNetEvent('vd-inventory:client:updateStash')
 AddEventHandler('vd-inventory:client:updateStash', function(stashIndex, occupation, contents) 
     droppedItems[stashIndex].occupied = occupation
     droppedItems[stashIndex].contents = contents
+end)
+
+RegisterNetEvent('vd-inventory:client:consumeItem')
+AddEventHandler('vd-inventory:client:consumeItem', function(stashIndex, occupation, contents) 
+    SendNUIMessage({
+        type = 'consumeItem'
+    })
 end)
 
 RegisterNetEvent('vd-inventory:client:getInventory')
@@ -185,7 +196,7 @@ Citizen.CreateThread(function()
             Wait(250) -- Wait so the inventory doesn't open and directly close again
 
             if(closestDroppedItemDistance ~= nil and closestDroppedItemIndex ~= nil and not IsPedInAnyVehicle(PlayerPedId(), true)) and GetVehicleNumberPlateText(VDCore.getClosestVehicle(5.0)) == nil then 
-                if closestDroppedItemDistance <= 5 then 
+                if closestDroppedItemDistance <= 2 then 
                     SendNUIMessage({
                         type = 'showInv',
                         inventoryData = droppedItems[closestDroppedItemIndex]

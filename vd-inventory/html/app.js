@@ -4,42 +4,163 @@ var currentPersonalInventory = [];
 var externalMaxWeight = 120.0
 var isInVehicle = false
 var isInTrunk = false
+var latestUsedItem = null
 
-window.onload = function() {
-    setTotalWeight();
-    console.log("(0.1)".replace("(", "").replace(")", ""))
+// window.onload = function() {
+//     this.giveItem('thermite', 20)
+//     this.createPersonalInventory()
+//     this.createExternalInventory(25)
+// }
+
+
+function startInventory() {
+    var lastPickedUpItem = null
+
+    $('.inventorybox').draggable({
+        revert: 'valid',
+
+        start: function (ev, ui) {
+            let source = $(this)
+            if ($(source.children()[0]).html() == "") {
+                console.log('test')
+                ev.preventDefault()
+            }
+        },
+
+        helper: function () {
+            let source = $(this)
+            if ($(source) != undefined) {
+                lastPickedUpItem = source
+                return $('<div class="inventorybox" id="tempBox"></div>').css({
+                    'width': '135px',
+                    'height': '190px',
+                    'position': 'absolute',
+                    'background-image': $(source).css('background-image')
+                }).append('<div class="itemtext">' + $(source.children()[0]).html() + '</div>').append('<div class="weightCount">' + $(source.children()[1]).html() + '</div>')
+            } else {
+                return;
+            }
+        }
+    })
+
+    $('.inventorybox').droppable({
+        drop: function (ev, ui) {
+            let target = $(this);
+            let moreThanMaxWeight = calculateWeightOverflow(lastPickedUpItem.attr('id'), target.attr('id'))
+            let itemQuantity = (isNaN(parseFloat($('#quantity').val()))) ? 0 : parseFloat($('#quantity').val());
+            let itemIndex = items.map(function (a) { return a.itemName }).indexOf($(lastPickedUpItem.children()[0]).html().toUpperCase());
+            let itemCount = parseFloat($(lastPickedUpItem.children()[1]).html().split(' ')[0])
+
+            let targetWeightCount = $(target.children()[1]).html()
+            let sourceWeightCount = $(lastPickedUpItem.children()[1]).html()
+            let targetName = $(target.children()[0]).html()
+            let sourceName = $(lastPickedUpItem.children()[0]).html()
+
+            if (!moreThanMaxWeight && !(itemQuantity > itemCount)) {
+                if ((itemQuantity == 0 || itemQuantity == itemCount) && (targetName != sourceName || items[itemIndex].stackable == false)) {
+                    $(lastPickedUpItem.children()[0]).html(targetName)
+                    $(lastPickedUpItem.children()[1]).html(targetWeightCount)
+                    $(lastPickedUpItem).css('background-image', $(target).css('background-image'))
+                    
+                    $(target.children()[0]).html(sourceName)
+                    $(target.children()[1]).html(sourceWeightCount)
+                    $(target).css('background-image', $(lastPickedUpItem).css('background-image'))
+                } else if($(target.children()[0]).html() == $(lastPickedUpItem.children()[0]).html() || $(target.children()[0]).html() == "") {
+                    let newItemCount = parseFloat(itemCount) - itemQuantity
+
+                    if($(target.children()[0]).html() == $(lastPickedUpItem.children()[0]).html()) {
+                        if(itemQuantity == 0 || itemQuantity == itemCount) {
+                            itemCount += parseFloat($(target.children()[1]).html().split(' ')[0])
+
+                            $(lastPickedUpItem.children()[0]).html("")
+                            $(lastPickedUpItem.children()[1]).html("")
+                            $(lastPickedUpItem).css('background-image', 'none')
+
+                            $(target.children()[1]).html(itemCount + ' (' + (itemCount * items[itemIndex].itemWeight).toFixed(1) + ')')
+                        } else {
+                            itemCount -= itemQuantity
+                            $(lastPickedUpItem.children()[1]).html(itemCount + ' (' + (itemCount * items[itemIndex].itemWeight).toFixed(1) + ')')
+                            itemCount = itemQuantity + parseFloat($(target.children()[1]).html().split(' ')[0])
+                            $(target.children()[1]).html(itemCount + ' (' + (itemCount * items[itemIndex].itemWeight).toFixed(1) + ')')
+
+                        }
+                    } else {
+                        $(target.children()[0]).html($(lastPickedUpItem.children()[0]).html())
+                        $(target.children()[1]).html(itemQuantity + ' (' + (itemQuantity * items[itemIndex].itemWeight).toFixed(1) + ')')
+
+                        $(lastPickedUpItem.children()[1]).html(newItemCount + ' (' + (newItemCount * items[itemIndex].itemWeight).toFixed(1) + ')')
+                    }
+                }
+
+                if (lastPickedUpItem.parent().attr('id') == 'personalInventory' && target.parent().attr('id') == 'externalInventory') {
+                    dropItem(target.attr('id'))
+                }
+
+                $('.ui-draggable-dragging').remove();
+
+                setTotalWeight()
+            }
+        }
+    })
+
+    $('#use').droppable({
+        drop: function (ev, ui) {
+            useItem(lastPickedUpItem.attr('id'))
+            $('.ui-draggable-dragging').remove()
+        }
+    })
 }
 
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drop(ev) {
-    ev.preventDefault();
-    let data = ev.dataTransfer.getData("text");
-
-    if(ev.target.id == 'use') {
-        useItem(data)
-        return;
+function dropItem(item) {
+    let empty = true;
+    for (let i = 0; i < document.getElementById('externalInventory').querySelectorAll('div.inventorybox').length; i++) {
+        let itemName = document.getElementById('externalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll("div.itemtext")[0].innerText;
+        if (itemName != "" && itemName != document.getElementById(item).querySelectorAll("div.itemtext")[0].innerText) {
+            empty = false;
+            break;
+        }
     }
+    if (empty == true && isInGroundStash == false) {
+        let contents = [];
+        for (let i = 0; i < registerExternalInventory().length; i++) { // convert the array to string form
+            if (registerExternalInventory()[i] != undefined) {
+                contents.push(registerExternalInventory()[i].itemName.replace(" ", "_") + " " + registerExternalInventory()[i].itemCount)
+            } else contents.push("");
+        }
+        isInGroundStash = true;
 
+        if (isInVehicle == false && isInTrunk == false) {
+            currentGroundStashID = createID(15)
+        } else if (isInVehicle == true) {
+            currentGroundStashID = document.getElementById('external').innerText.replace("Glovebox-", "GL")
+        } else if (isInTrunk == true) {
+            currentGroundStashID = document.getElementById('external').innerText.replace("Trunk-", "TR")
+        }
+
+        $.post("http://vd-inventory/dropItem", JSON.stringify({
+            contents: contents.toString(),
+            id: currentGroundStashID
+        }));
+    }
+}
+
+function calculateWeightOverflow(source, trgt) {
     let moreThanMaxWeight = false;
     let itemQuantity = (isNaN(parseFloat(document.getElementById('quantity').value))) ?  0 : parseFloat(document.getElementById('quantity').value);
-    let targetInventory = ev.target.parentNode.id;
-    let sourceInventory = document.getElementById(data).parentNode.id;
+    let target = document.getElementById(trgt)
 
-    if (ev.target.parentNode.id == "externalInventory") { // check if total weight will be more than the max weight
-        if (!(document.getElementById(data).parentNode.id == "externalInventory")) {
+    if (target.parentNode.id == "externalInventory") { // check if total weight will be more than the max weight
+        if (!(document.getElementById(source).parentNode.id == "externalInventory")) {
             let externalTotalWeight = parseFloat(document.getElementById('externalTotalWeight').innerText.split(" ")[1]);
             let externalMaxWeight = parseFloat(document.getElementById('externalTotalWeight').innerText.split(" ")[3]);
             let itemWeight;
 
             if(itemQuantity != 0) {
-                let itemName = document.getElementById(data).getElementsByClassName('itemtext')[0].innerText
+                let itemName = document.getElementById(source).getElementsByClassName('itemtext')[0].innerText
                 let itemIndex = items.map(function(a) { return a.itemName }).indexOf(itemName.toUpperCase());
                 itemWeight = parseFloat(document.getElementById('quantity').value) * items[itemIndex].itemWeight;
             } else {
-                itemWeight = parseFloat(document.getElementById(data).getElementsByClassName('weightCount')[0].innerText.split(" ")[1].replace("(", "").replace(")", ""));
+                itemWeight = parseFloat(document.getElementById(source).getElementsByClassName('weightCount')[0].innerText.split(" ")[1].replace("(", "").replace(")", ""));
             }
 
             if (itemWeight + externalTotalWeight > externalMaxWeight) {
@@ -47,18 +168,18 @@ function drop(ev) {
             }
 
         }
-    } else if(ev.target.parentNode.id == "personalInventory") {
-        if (!(document.getElementById(data).parentNode.id == "personalInventory")) {
+    } else if(target.parentNode.id == "personalInventory") {
+        if (!(document.getElementById(source).parentNode.id == "personalInventory")) {
             let personalTotalWeight = parseFloat(document.getElementById('personalTotalWeight').innerText.split(" ")[1]);
             let personalMaxWeight = parseFloat(document.getElementById('personalTotalWeight').innerText.split(" ")[3]);
             let itemWeight;
 
             if(itemQuantity != 0) {
-                let itemName = document.getElementById(data).getElementsByClassName('itemtext')[0].innerText
+                let itemName = document.getElementById(source).getElementsByClassName('itemtext')[0].innerText
                 let itemIndex = items.map(function(a) { return a.itemName }).indexOf(itemName.toUpperCase());
                 itemWeight = parseFloat(document.getElementById('quantity').value) * items[itemIndex].itemWeight
             } else {
-                itemWeight = parseFloat(document.getElementById(data).getElementsByClassName('weightCount')[0].innerText.split(" ")[1].replace("(", "").replace(")", ""));
+                itemWeight = parseFloat(document.getElementById(source).getElementsByClassName('weightCount')[0].innerText.split(" ")[1].replace("(", "").replace(")", ""));
             }
 
             if (itemWeight + personalTotalWeight > personalMaxWeight) {
@@ -67,163 +188,7 @@ function drop(ev) {
         }
     }
 
-    if(!(ev.target.id == document.getElementById(data).id) && moreThanMaxWeight == false) {
-        if (ev.target.className == 'inventorybox' && !(ev.target.getElementsByClassName('itemtext')[0].innerText == document.getElementById(data).getElementsByClassName('itemtext')[0].innerText)
-            && (itemQuantity == 0 || parseFloat(document.getElementById(data).getElementsByClassName('weightCount')[0].innerText.split(" ")[0]) - parseFloat(document.getElementById('quantity').value) == 0)) {
-
-            let element = document.getElementById(data).getElementsByTagName('div')[2]
-            let children = document.getElementById(data).childNodes
-
-            if (document.getElementById(data).getElementsByTagName('div')[2] != undefined || ev.target.getElementsByTagName('div')[2] != undefined) {
-                if (!(document.getElementById(data).getElementsByTagName('div')[2] != undefined && ev.target.getElementsByTagName('div')[2] != undefined)) {
-                    if (element != undefined) {
-                        ev.target.appendChild(document.getElementById(data).childNodes[Array.prototype.indexOf.call(children, element)])
-                    } else {
-                        document.getElementById(data).appendChild(ev.target.childNodes[Array.prototype.indexOf.call(ev.target.childNodes, ev.target.getElementsByTagName('div')[2])])
-                    }
-                } else {
-                    ev.target.appendChild(document.getElementById(data).childNodes[Array.prototype.indexOf.call(children, element)])
-                    document.getElementById(data).appendChild(ev.target.childNodes[Array.prototype.indexOf.call(ev.target.childNodes, ev.target.getElementsByTagName('div')[2])])
-                }
-            }
-
-            var tempDiv = document.createElement("div");
-
-            if (document.getElementById(data).parentNode.id == 'personalInventory') {
-                document.querySelectorAll('div.inventory#personalInventory')[0].insertBefore(tempDiv, document.getElementById(data));
-                ev.target.parentNode.insertBefore(document.getElementById(data), ev.target);
-                document.querySelectorAll('div.inventory#personalInventory')[0].insertBefore(ev.target, tempDiv);
-            } else {
-                document.querySelectorAll('div.inventory#externalInventory')[0].insertBefore(tempDiv, document.getElementById(data));
-                ev.target.parentNode.insertBefore(document.getElementById(data), ev.target);
-                document.querySelectorAll('div.inventory#externalInventory')[0].insertBefore(ev.target, tempDiv);
-            }
-
-            ev.target.parentNode.removeChild(tempDiv);
-
-            for (let i = 0; i < document.getElementById('personalInventory').querySelectorAll('div.inventorybox').length; i++) {
-                let slot = i + 1
-                ///console.log('Slot ' + slot + ": " + document.getElementById('personalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll('div.weightCount')[0].innerText.split(" ")[0] + "x " + document.getElementById('personalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll('div.itemtext')[0].innerText)
-            }
-
-            for (let i = 0; i < document.getElementById('externalInventory').querySelectorAll('div.inventorybox').length; i++) {
-                let slot = i + 1
-                //console.log('Slot ' + slot + ": " + document.getElementById('externalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll('div.weightCount')[0].innerText.split(" ")[0] + "x " + document.getElementById('externalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll('div.itemtext')[0].innerText)
-            }
-
-        } else if (ev.target.className == 'inventorybox') {
-
-            let icon = document.getElementById(data).style.backgroundImage;
-            let itemName = document.getElementById(data).getElementsByClassName('itemtext')[0].innerText;
-            let count = parseFloat(document.getElementById(data).getElementsByClassName('weightCount')[0].innerText.split(" ")[0]);
-            let itemIndex = items.map(function (a) { return a.itemName }).indexOf(itemName);
-            let itemWeight = items[itemIndex].itemWeight;
-            let targetItemWeight = parseFloat(ev.target.getElementsByClassName('weightCount')[0].innerText.split(" ")[0])
-            let quantity = null;
-
-            if (document.getElementById('quantity').value > 0) {
-                quantity = parseFloat(document.getElementById('quantity').value);
-            } else {
-                quantity = parseFloat(document.getElementById(data).getElementsByClassName('weightCount')[0].innerText.split(" ")[0]);
-            }
-
-            if (ev.target.getElementsByClassName('itemtext')[0].innerText == itemName && items[itemIndex].stackable == true && !(quantity > count)) {
-                ev.target.getElementsByClassName('itemtext')[0].innerText = itemName;
-                ev.target.getElementsByClassName('weightCount')[0].innerHTML = (quantity + targetItemWeight) + ' (' + ((quantity + targetItemWeight) * itemWeight).toFixed(1) + ')';
-
-                if (!(quantity == 0 || quantity == count)) {
-                    document.getElementById(data).getElementsByClassName('weightCount')[0].innerText = (count - quantity) + ' (' + ((count - quantity) * itemWeight).toFixed(1) + ')';
-                } else {
-                    document.getElementById(data).style.backgroundImage = 'none';
-                    document.getElementById(data).getElementsByClassName('weightCount')[0].innerText = "";
-                    document.getElementById(data).getElementsByClassName('itemtext')[0].innerText = "";
-                }
-            } else if (!(quantity > count) && items[itemIndex].stackable == true) {
-                ev.target.style.backgroundImage = icon;
-                ev.target.getElementsByClassName('itemtext')[0].innerText = itemName;
-                ev.target.getElementsByClassName('weightCount')[0].innerHTML = quantity + ' (' + (quantity * itemWeight).toFixed(1) + ')';
-                document.getElementById(data).getElementsByClassName('weightCount')[0].innerText = (count - quantity) + ' (' + ((count - quantity) * itemWeight).toFixed(1) + ')';
-            }
-
-        }
-
-        if (sourceInventory == "personalInventory" && targetInventory == "externalInventory") {
-            let empty = true;
-            for (let i = 0; i < document.getElementById('externalInventory').querySelectorAll('div.inventorybox').length; i++) {
-                let itemName = document.getElementById('externalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll("div.itemtext")[0].innerText;
-                if (itemName != "" && itemName != document.getElementById(data).querySelectorAll("div.itemtext")[0].innerText) {
-                    empty = false;
-                    break;
-                }
-            }
-            if (empty == true && isInGroundStash == false) { 
-                let contents = [];
-                for(let i = 0; i < registerExternalInventory().length; i++) { // convert the array to string form
-                    if(registerExternalInventory()[i] != undefined) {
-                        contents.push(registerExternalInventory()[i].itemName.replace(" ", "_") + " " + registerExternalInventory()[i].itemCount)
-                    } else contents.push("");
-                }
-                isInGroundStash = true;
-
-                if(isInVehicle == false && isInTrunk == false) {
-                    currentGroundStashID = createID(15)
-                } else if(isInVehicle == true) {
-                    currentGroundStashID = document.getElementById('external').innerText.replace("Glovebox-", "GL")
-                } else if(isInTrunk == true) {
-                    currentGroundStashID = document.getElementById('external').innerText.replace("Trunk-", "TR")
-                }
-
-                $.post("http://vd-inventory/dropItem", JSON.stringify({
-                    contents: contents.toString(),
-                    id: currentGroundStashID
-                })); 
-            }
-        }
-        
-    }
-    setTotalWeight()
-    ev.dataTransfer.clearData();
-}
-
-function dragStart(ev) {
-    if(ev.target.childNodes[0].innerHTML != "") {
-        ev.dataTransfer.setData("text/plain", ev.target.id);
-
-        let tempBox = document.createElement('div');
-        let itemtext = document.createElement('div');
-        itemtext.className = "itemtext";
-        itemtext.innerText = ev.target.getElementsByClassName('itemtext')[0].innerText;
-        tempBox.className = "inventorybox";
-        tempBox.setAttribute('id', 'tempBox')
-        tempBox.appendChild(itemtext);
-
-        tempBox.style.backgroundImage = ev.target.style.backgroundImage;
-        tempBox.style.transform = 'translateY('+(ev.clientY-100)+'px)';
-        tempBox.style.transform += 'translateX('+(ev.clientX-900)+'px)';  
-        tempBox.style.position = "absolute";
-        tempBox.style.width = "135px";
-        tempBox.style.height = "190px";
-        tempBox.style.pointerEvents = "none";
-
-        document.querySelectorAll('div.inventoryBody')[0].appendChild(tempBox);
-
-        document.addEventListener('drag', function(ev) {
-            ev.target.focus()
-            if(document.getElementById('tempBox') != null) {
-                document.getElementById('tempBox').style.transform = 'translateY('+(ev.clientY-100)+'px)';
-                document.getElementById('tempBox').style.transform += 'translateX('+(ev.clientX-900)+'px)';  
-            }
-        });
-
-        document.addEventListener('dragend', function(ev) {
-            if(document.getElementById('tempBox') != null) {
-                document.querySelectorAll('div.inventoryBody')[0].removeChild(document.getElementById('tempBox'))
-            }
-        });
-    } else {
-        ev.preventDefault();
-    }
-
+    return moreThanMaxWeight
 }
 
 function showDescription(ev) {
@@ -315,10 +280,10 @@ function createExternalInventory(boxes, contents) {
            
         box.className = "inventorybox";
         box.setAttribute('id', 'e' + slot);
-        box.setAttribute('draggable', 'true');
-        box.setAttribute('ondragover', 'allowDrop(event)');
-        box.setAttribute('ondrop', 'drop(event)');
-        box.setAttribute('ondragstart', 'dragStart(event)');
+        //box.setAttribute('draggable', 'true');
+        //box.setAttribute('ondragover', 'allowDrop(event)');
+        //box.setAttribute('ondrop', 'drop(event)');
+        //box.setAttribute('ondragstart', 'dragStart(event)');
         box.setAttribute('onmouseover', 'showDescription(event)');
         box.setAttribute('onmouseout', 'hideDescription(event)');
 
@@ -326,6 +291,8 @@ function createExternalInventory(boxes, contents) {
         box.appendChild(weightCount);
         document.querySelectorAll('div#externalInventory')[0].appendChild(box);
     }
+
+    startInventory()
 }
 
 function createPersonalInventory() {
@@ -365,10 +332,10 @@ function createPersonalInventory() {
 
         box.className = "inventorybox";
         box.setAttribute('id', 'p' + slot);
-        box.setAttribute('draggable', 'true');
-        box.setAttribute('ondragover', 'allowDrop(event)');
-        box.setAttribute('ondrop', 'drop(event)');
-        box.setAttribute('ondragstart', 'dragStart(event)');
+        //box.setAttribute('draggable', 'true');
+        //box.setAttribute('ondragover', 'allowDrop(event)');
+        //box.setAttribute('ondrop', 'drop(event)');
+        //box.setAttribute('ondragstart', 'dragStart(event)');
         box.setAttribute('onmouseover', 'showDescription(event)');
         box.setAttribute('onmouseout', 'hideDescription(event)');
         box.appendChild(itemtext);
@@ -383,25 +350,53 @@ function createPersonalInventory() {
         }
         document.querySelectorAll('div#personalInventory')[0].appendChild(box);
     }
+
+    startInventory()
 }
 
 function useItem(itemData) {
+    closeInv()
+
     createPersonalInventory()
     let itemName = document.getElementById(itemData).getElementsByClassName('itemtext')[0].innerText;
-    let itemQuantity = parseFloat(document.getElementById(itemData).getElementsByClassName('weightCount')[0].innerText.split(" ")[0])
-    let itemWeight = parseFloat(document.getElementById(itemData).getElementsByClassName('weightCount')[0].innerText.split(" ")[1].replace("(", "").replace(")", ""))
     let itemIndex = items.map(function(a) { return a.itemName }).indexOf(itemName);
 
     if(items[itemIndex].usable == true) {
-        if(items[itemIndex].consumable == true) {
-            document.getElementById(itemData).getElementsByClassName('weightCount')[0].innerText = (itemQuantity - 1) + " (" + (itemWeight - items[itemIndex].itemWeight).toFixed(1) + ")"
-        }
         $.post("http://vd-inventory/" + items[itemIndex].callback, JSON.stringify({
-            itemName: document.getElementById(itemData).getElementsByClassName('itemtext')[0].innerText.split(" ")
+            itemName: document.getElementById(itemData).getElementsByClassName('itemtext')[0].innerText.split(" "),
         }))
     }
-    closeInv()
+    latestUsedItem = itemData
     removePersonalInventory()
+}
+
+function consumeItem() {
+    if(latestUsedItem != null) {
+        createPersonalInventory()
+        let itemName = document.getElementById(latestUsedItem).getElementsByClassName('itemtext')[0].innerText;
+        let itemIndex = items.map(function (a) { return a.itemName }).indexOf(itemName);
+        let itemQuantity = parseFloat(document.getElementById(latestUsedItem).getElementsByClassName('weightCount')[0].innerText.split(" ")[0])
+        let itemWeight = parseFloat(document.getElementById(latestUsedItem).getElementsByClassName('weightCount')[0].innerText.split(" ")[1].replace("(", "").replace(")", ""))
+
+        if (items[itemIndex].consumable == true) {
+            console.log("CONSUME")
+            document.getElementById(latestUsedItem).getElementsByClassName('weightCount')[0].innerText = (itemQuantity - 1) + " (" + (itemWeight - items[itemIndex].itemWeight).toFixed(1) + ")"
+            itemFeedback(itemName, 'VERWIJDERD')
+        }
+
+        itemQuantity = parseFloat(document.getElementById(latestUsedItem).getElementsByClassName('weightCount')[0].innerText.split(" ")[0])
+
+        if (itemQuantity <= 0) {
+            document.getElementById(latestUsedItem).getElementsByClassName('itemtext')[0].innerText = "";
+            document.getElementById(latestUsedItem).getElementsByClassName('weightCount')[0].innerText = "";
+            document.getElementById(latestUsedItem).style.backgroundImage = "none";
+        }
+
+        latestUsedItem = null
+
+        registerPersonalInventory()
+        removePersonalInventory()
+    }
 }
 
 function setTotalWeight() {
@@ -483,7 +478,6 @@ function removePersonalInventory() {
 }
 
 function giveItem(itemName, quantity) {
-    console.log('test')
     itemName = itemName.replace("_", " ").replace("_", " ").replace("_", " ")
 
     let personalTotalWeight = parseFloat(document.getElementById('personalTotalWeight').innerText.split(" ")[1]);
@@ -542,12 +536,16 @@ function giveItem(itemName, quantity) {
 }
 
 function clearInventory() {
+    closeInv()
+
     createPersonalInventory()
     for (let i = 0; i < document.getElementById('personalInventory').querySelectorAll('div.inventorybox').length; i++) {
         document.getElementById('personalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll("div.itemtext")[0].innerText = ""
         document.getElementById('personalInventory').querySelectorAll('div.inventorybox')[i].querySelectorAll("div.weightCount")[0].innerText = ""
         document.getElementById('personalInventory').querySelectorAll('div.inventorybox')[i].style.backgroundImage = "none";
     }
+
+    registerPersonalInventory()
     removePersonalInventory()
 }
 
@@ -649,9 +647,12 @@ window.addEventListener('message', function(e) {
         removePersonalInventory()
     }
 
+    if(data.type == "consumeItem") {
+        consumeItem(latestUsedItem)
+    }
+
     if(data.type == "setInventory") {
         currentPersonalInventory = data.contents.split(",")
-        console.log(currentPersonalInventory)
         createPersonalInventory()
     }
 

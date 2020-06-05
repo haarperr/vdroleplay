@@ -1,6 +1,7 @@
 body {
     display: block;
     margin: 0;
+    overflow-y: hidden;
 }
 
 .inventoryBody {
@@ -48,6 +49,7 @@ body {
     vertical-align: bottom;
     position: relative;
     background-position: 3px 15px;
+    user-select: none;
 }
 
 .button {
@@ -62,6 +64,7 @@ body {
     position: absolute;
     border: none;
     outline-color: rgba(65, 73, 90, 0.5);
+    user-select: none;
 }
 
 .inventorybox:hover {
@@ -80,6 +83,7 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     position: absolute;
     bottom: 0;
+    user-select: none;
 }
 
 .weightCount {
@@ -91,6 +95,7 @@ body {
     font-size: 80%;
     color: white;
     font-weight: bold;
+    user-select: none;
 }
 
 .nameTotalWeight {
@@ -98,6 +103,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 150%;
     font-weight: 530;
+    user-select: none;
 }
 
 #quickSlotInfo {
@@ -199,6 +205,7 @@ body {
     clear: left;
     position: relative;
     display: inline-block;
+    user-select: none;
 }
 
 @keyframes fade {

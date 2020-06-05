@@ -5,5 +5,6 @@ var items = [
     {itemName: "WRENCH", itemWeight: 1.0, usable: true, consumable: false, icon: '', stackable: false, description: "This is a placeholder description", callback: "useWeapon"},
     {itemName: "RIFLE AMMO", itemWeight: 0.2, usable: true, consumable: false, icon: '', stackable: false, description: "This is a placeholder description", callback: "useAmmo"},
     {itemName: "BANDAGE", itemWeight: 0.1, usable: true, consumable: true, icon: '', stackable: true, description: "This is a placeholder description", callback: ""},
+    {itemName: "THERMITE", itemWeight: 0.5, usable: true, consumable: true, icon: '', stackable: true, description: "This is a placeholder description", callback: "useThermite"},
     {itemName: "POLITIE ZWAAR VEST", itemWeight: 1.0, usable: true, consumable: true, icon: '', stackable: true, description: "This is a placeholder description", callback: ""}
 ];
