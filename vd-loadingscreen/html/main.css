@@ -1,0 +1,79 @@
+* {
+    color: #eee;
+    font-size: 30px;
+}
+
+.bg {
+    background-color: #4f4f4f;
+}
+
+.container {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.loadbar {
+    width: 43%;
+    background-color: #9d9d9d;
+    height: 40px;
+    border-radius: 10px;
+
+    margin-left: 550px;
+    margin-right: 350px;
+    margin-top: 5px;
+    margin-bottom: 250px;
+
+    overflow: hidden;
+    position: fixed;
+    left: 0;
+    right: 10%;
+    bottom: 0;
+}
+
+.progressBar {
+    width: 100%;
+    background-color: #ffffff;
+    height: 40px;
+    position: absolute;
+    left: 0%;
+
+    animation: load 20s linear;
+}
+
+@keyframes load {
+    0% {
+      width: 0;
+    }
+    10% {
+      width: 5%;
+    }
+    20% {
+      width: 15%;
+    }
+    30% {
+      width: 25%;
+    }
+    40% {
+      width: 30%;
+    }
+    50% {
+      width: 44%;
+    }
+    60% {
+      width: 50%;
+    }
+    70% {
+      width: 72%;
+    }
+    80% {
+      width: 84%;
+    }
+    90% {
+      width: 92%;
+    }
+    100% {
+      width: 100%;
+    }
+  }

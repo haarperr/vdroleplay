@@ -1,18 +1,14 @@
 VDCore = {}
 VDCore.PlayerData = {}
-VDCore.PlayerData.firstName = ''
-VDCore.PlayerData.lastName = ''
-VDCore.PlayerData.birthDate = ''
-VDCore.PlayerData.gender = ''
-VDCore.PlayerData.nationality = ''
-VDCore.PlayerData.job = ''
-VDCore.PlayerData.cashAmount = ''
-VDCore.PlayerData.bankAmount = ''
-VDCore.PlayerData.phoneNumber = ''
-VDCore.PlayerData.accountNumber = ''
-VDCore.PlayerData.citizenID = ''
 
-VDCore.DrawText3Ds = function(x, y, z, text)
+VDCore.Game = {}
+VDCore.World = {}
+
+VDCore.Table = {}
+
+VDCore.Permissions = {}
+
+VDCore.World.DrawText3Ds = function(x, y, z, text)
     SetTextScale(0.35, 0.35)
     SetTextFont(4)
     SetTextProportional(1)
@@ -27,7 +23,7 @@ VDCore.DrawText3Ds = function(x, y, z, text)
     ClearDrawOrigin()
 end
 
-VDCore.DrawText2D = function(x, y, text)
+VDCore.World.DrawText2D = function(x, y, text)
     SetTextFont(4)
     SetTextProportional(1)
     SetTextScale(0.6, 0.6)
@@ -41,12 +37,13 @@ VDCore.DrawText2D = function(x, y, text)
     EndTextCommandDisplayText(x, y)
 end
 
-VDCore.Notify = function(msg)
+VDCore.Game.Notify = function(msg, type)
     if msg ~= nil then
-        TriggerEvent('vd-core:notify', msg)
+        TriggerEvent('vd-core:notify', msg, type)
     end
 end
 
+--VDCore.Game.PlayAnimation
 VDCore.loadAnim = function(dict)
 	RequestAnimDict(dict)
 	while not HasAnimDictLoaded(dict) do
@@ -54,6 +51,7 @@ VDCore.loadAnim = function(dict)
 	end
 end
 
+--VDCore.World.getVehicleLookingAt
 VDCore.getClosestVehicle = function(radius) 
     local pos = GetEntityCoords(GetPlayerPed(-1))
     local entityWorld = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, radius, 0.0)   
@@ -74,13 +72,15 @@ VDCore.setPedRagdoll = function(bool)
     end
 end
 
-VDCore.revive = function(ped)
+--VDCore.Game.Revive
+VDCore.Revive = function(ped)
     VDCore.isDead = false
     ClearPedTasksImmediately(ped)
+    SetEntityHealth(PlayerPedId(), GetEntityMaxHealth(PlayerPedId()))
     ClearPedBloodDamage(ped)
-    SetEntityInvincible(ped, false)
 end
 
+--VDCore.World.GetPlayers
 VDCore.GetPlayers = function()
     local players = {}
 
@@ -93,6 +93,13 @@ VDCore.GetPlayers = function()
     return players
 end
 
+--VDCore.Game.togglePlayernames
+VDCore.togglePlayernames = function()
+    print('test')
+    togglePlayernames()
+end
+
+--VDCore.World.GetClosestPlayers
 VDCore.GetClosestPlayers = function()
     local players = VDCore.GetPlayers()
     local range = 20
@@ -112,6 +119,7 @@ VDCore.GetClosestPlayers = function()
     return closestPlayers
 end
 
+--VDCore.Table.Size
 VDCore.tablesize = function(table) 
     local size = 0
     for _ in pairs(table) do size = size + 1 end
@@ -119,6 +127,7 @@ VDCore.tablesize = function(table)
     return size
 end
 
+--VDCore.Table.HasValue
 VDCore.table_has_value = function(tab, val)
     for index, value in ipairs(tab) do
         if value == val then
@@ -127,6 +136,10 @@ VDCore.table_has_value = function(tab, val)
     end
 
     return false
+end
+
+VDCore.Table.Contains = function(table, value) 
+    return table[value] ~= nil
 end
 
 VDCore.playAnim = function(animDict, animName, duration, flag) 
@@ -159,32 +172,31 @@ VDCore.chatNotify = function(type, message)
     end
 end
 
+--VDCore.World.CreateObject
 VDCore.createObject = function(object_model) 
-    Citizen.CreateThread(function()
-        RequestModel(object_model)
-        local requestWait = 1
+    RequestModel(object_model)
+    local requestWait = 0
 
-        while not HasModelLoaded(object_model) and requestWait < 5 do
-            Citizen.Wait(500)				
-            requestWait = requestWait + 1
-        end
+     while not HasModelLoaded(object_model) and requestWait < 4 do
+        Citizen.Wait(500)				
+        requestWait = requestWait + 1
+    end
 
-        if not HasModelLoaded(object_model) then
-            SetModelAsNoLongerNeeded(object_model)
-            VDCore.Notify('Loading Model took too long')
-        else
-            local ped = PlayerPedId()
-            local x,y,z = table.unpack(GetEntityCoords(ped))
-            local created_object = CreateObjectNoOffset(object_model, x, y, z, 1, 0, 1)
-            PlaceObjectOnGroundProperly(created_object)
-            SetModelAsNoLongerNeeded(object_model)
-        end
-    end)
+    if not HasModelLoaded(object_model) then
+        SetModelAsNoLongerNeeded(object_model)
+        VDCore.Game.Notify('Loading Model took too long')
+    else
+        local ped = PlayerPedId()
+        local x,y,z = table.unpack(GetEntityCoords(ped))
+        local created_object = CreateObjectNoOffset(object_model, x, y, z, 1, 0, 1)
+        PlaceObjectOnGroundProperly(created_object)
+        SetModelAsNoLongerNeeded(object_model)
+    end
 end
 
 RegisterNetEvent('vd-multicharacter:recieveCurrentPlayerData')
 AddEventHandler('vd-multicharacter:recieveCurrentPlayerData', function(data) 
-    VDCore.PlayerData = {}
+    VDCore.PlayerData = {firstName, lastName, birthDate, gender, nationality, job, cashAmount, bankAmount, phoneNumber, accountNumber, citizenID}
     VDCore.PlayerData.firstName = data.firstName
     VDCore.PlayerData.lastName = data.lastName
     VDCore.PlayerData.birthDate = data.birthDate
@@ -196,4 +208,9 @@ AddEventHandler('vd-multicharacter:recieveCurrentPlayerData', function(data)
     VDCore.PlayerData.phoneNumber = data.phoneNumber
     VDCore.PlayerData.accountNumber = data.accountNumber
     VDCore.PlayerData.citizenID = data.citizenID
+end)
+
+RegisterNetEvent('vd-core:getSharedObject')
+AddEventHandler('vd-core:getSharedObject', function(cb) 
+    cb(VDCore)
 end)

@@ -1,10 +1,47 @@
-local isInTrunk = false
-local droppedItems = {
+TriggerEvent('chat:addSuggestion', '/giveitem', 'Give an item to a player', {
+    { name="id", help="The ID of the target player" },
+    { name="item", help="The item you want to give" },
+    { name="quantity", help="How many you want to give of that item" }
+})
 
-}
+local isInTrunk = false
+local droppedItems = {}
+local VDCore = nil
+
+function holsterWeapon() 
+    if GetSelectedPedWeapon(PlayerPedId()) ~= -1569615261 then 
+        RequestAnimDict('reaction@intimidation@1h')
+        while not HasAnimDictLoaded('reaction@intimidation@1h') do
+            Citizen.Wait(100)
+        end
+
+        TaskPlayAnim(PlayerPedId(), 'reaction@intimidation@1h', 'outro', 8.0, -8.0, 2700, 48, 0.0, false, false, false)
+        Wait(2000)
+        RemoveWeaponFromPed(PlayerPedId(), GetSelectedPedWeapon(PlayerPedId()))
+        SetCurrentPedWeapon(PlayerPedId(), -1569615261, true)
+    end
+end
 
 Citizen.CreateThread(function() 
     while true do
+        while VDCore == nil do 
+            TriggerEvent('vd-core:getSharedObject', function(obj) 
+                VDCore = obj
+            end)
+            Wait(50)
+        end
+
+        HideHudComponentThisFrame(19)
+        DisableControlAction(1, 37, false)
+
+        if IsPedInAnyVehicle(PlayerPedId(), true) then 
+            if(not CanUseWeaponOnParachute(GetSelectedPedWeapon(PlayerPedId()))) then
+                print(CanUseWeaponOnParachute(GetSelectedPedWeapon(PlayerPedId())))
+                RemoveWeaponFromPed(PlayerPedId(), GetSelectedPedWeapon(PlayerPedId()))
+                SetCurrentPedWeapon(PlayerPedId(), -1569615261, true)
+            end
+        end
+
         for i,v in pairs(droppedItems) do
             x, y, z = table.unpack(GetEntityCoords(PlayerPedId()))
             distance = GetDistanceBetweenCoords(x, y, z, droppedItems[i].x, droppedItems[i].y, droppedItems[i].z, true)
@@ -37,19 +74,21 @@ RegisterNUICallback('dropItem', function(data)
 
     if(not IsPedInAnyVehicle(PlayerPedId(), true) and isInTrunk == false) then
         stash.x, stash.y, stash.z = table.unpack(GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, 0.5, -0.6))
-
-        RequestAnimDict("random@mugging1")
-	    while not HasAnimDictLoaded("random@mugging1") do
-		    Citizen.Wait(50)
-        end
-    
-        TaskPlayAnim(PlayerPedId(), "random@mugging1", "pickup_low", 4.0, 1.0, -1, 8, 0, 0, 0, 0 )
-        RemoveAnimDict("random@mugging1")
     elseif IsPedInAnyVehicle(PlayerPedId(), true) and data.id ~= GetVehicleNumberPlateText(GetVehiclePedIsIn(PlayerPedId(), false)) and not isInTrunk then
         stash.x, stash.y, stash.z = table.unpack(GetOffsetFromEntityInWorldCoords(GetVehiclePedIsIn(PlayerPedId(), false), 0.0, 0.5, -0.6))
     end
 
     TriggerServerEvent('vd-inventory:server:dropItem', stash)
+
+    if(not IsPedInAnyVehicle(PlayerPedId(), true) and isInTrunk == false) then
+        RequestAnimDict("random@mugging1")
+        while not HasAnimDictLoaded("random@mugging1") do
+            Citizen.Wait(50)
+        end
+
+        TaskPlayAnim(PlayerPedId(), "random@mugging1", "pickup_low", 4.0, 1.0, -1, 8, 0, 0, 0, 0 )
+        RemoveAnimDict("random@mugging1")
+    end
 end)
 
 RegisterNUICallback('closeInv', function(data) 
@@ -63,7 +102,8 @@ RegisterNUICallback('closeInv', function(data)
                 break
             end
         end
-        TriggerServerEvent('vd-inventory:server:updateStash', index, false, data.contents)
+        TriggerServerEvent('vd-inventory:server:updateStash', index, false, data.contents)   
+        holsterWeapon()
     end
 
     if(isInTrunk) then 
@@ -74,7 +114,6 @@ RegisterNUICallback('closeInv', function(data)
 end)
 
 RegisterNUICallback('saveInventory', function(data) 
-    print(VDCore.PlayerData.citizenID)
     TriggerServerEvent('vd-inventory:server:saveInventory', VDCore.PlayerData.citizenID, data.contents)
 end)
 
@@ -83,14 +122,15 @@ RegisterNUICallback('useThermite', function(data)
 end)
 
 RegisterNUICallback('useWeapon', function(data) 
-    pid = PlayerPedId()
-    animDict = 'reaction@intimidation@1h'
+    local pid = PlayerPedId()
+    local animDict = 'reaction@intimidation@1h'
 
-    if VDCore.tablesize(data.itemName) == 2 then
-        weaponName = "WEAPON_" ..  data.itemName[1] .. data.itemName[2]
-    elseif VDCore.tablesize(data.itemName) == 1 then 
-        weaponName = "WEAPON_" ..  data.itemName[1]
+    local weaponName = "WEAPON_"
+    for i=1, VDCore.tablesize(data.itemName), 1 do
+        weaponName = weaponName .. data.itemName[i]
     end
+
+    print()
 
     weaponHash = GetHashKey(weaponName)
     bool, curWeaponHash = GetCurrentPedWeapon(pid, 1)
@@ -102,7 +142,6 @@ RegisterNUICallback('useWeapon', function(data)
 		Citizen.Wait(100)
     end
 
-    print(weaponHash)
     if GetSelectedPedWeapon(pid) == -1569615261 then -- -1569615261 is voor vuisten
         TaskPlayAnim(pid, animDict, 'intro', 8.0, -8.0, 2700, 48, 0.0, false, false, false)
         Wait(500)
@@ -127,7 +166,7 @@ RegisterCommand('clearinv', function()
     SendNUIMessage({
         type = "clearInventory"
     })
-    VDCore.Notify('Inventory cleared!')
+    VDCore.Game.Notify('Inventory cleared!')
 end)
 
 RegisterNUICallback('error', function(data) 
@@ -138,6 +177,18 @@ RegisterNetEvent('vd-inventory:client:updateStash')
 AddEventHandler('vd-inventory:client:updateStash', function(stashIndex, occupation, contents) 
     droppedItems[stashIndex].occupied = occupation
     droppedItems[stashIndex].contents = contents
+end)
+
+AddEventHandler('playerSpawned', function() 
+    Wait(10)
+    TriggerServerEvent('vd-inventory:server:getStashes', GetPlayerServerId(PlayerId()))
+end)
+
+RegisterNetEvent('vd-inventory:client:getStashes')
+AddEventHandler('vd-inventory:client:getStashes', function(stashes) 
+    for i,v in pairs(stashes) do 
+        table.insert(droppedItems, stashes[i])
+    end
 end)
 
 RegisterNetEvent('vd-inventory:client:consumeItem')
@@ -196,7 +247,7 @@ Citizen.CreateThread(function()
             Wait(250) -- Wait so the inventory doesn't open and directly close again
 
             if(closestDroppedItemDistance ~= nil and closestDroppedItemIndex ~= nil and not IsPedInAnyVehicle(PlayerPedId(), true)) and GetVehicleNumberPlateText(VDCore.getClosestVehicle(5.0)) == nil then 
-                if closestDroppedItemDistance <= 2 then 
+                if closestDroppedItemDistance <= 2 and droppedItems[closestDroppedItemIndex].occupied == false then 
                     SendNUIMessage({
                         type = 'showInv',
                         inventoryData = droppedItems[closestDroppedItemIndex]
@@ -218,7 +269,7 @@ Citizen.CreateThread(function()
                         end
                     end
 
-                    if index ~= nil then
+                    if index ~= nil and droppedItems[index].occupied == false then
                         SendNUIMessage({
                             type = 'showInv',
                             inventoryData = droppedItems[index],
@@ -250,7 +301,7 @@ Citizen.CreateThread(function()
                                 end
                             end
 
-                            if index ~= nil then
+                            if index ~= nil and droppedItems[index].occupied == false then
                                 SendNUIMessage({
                                     type = 'showInv',
                                     inventoryData = droppedItems[index],

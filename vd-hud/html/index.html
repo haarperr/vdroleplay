@@ -1,0 +1,113 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <div class="status">
+            <div class="box" id="bigBox">
+                <div class="bar" id="healthBar"></div>
+                <img src="heart.png" style="max-width: 25%; margin-left: 6px; margin-top: 6px; position: absolute;">
+            </div>
+            <div class="box" id="bigBox">
+                <div class="bar" id="armorBar"></div>
+                <img src="armor.png" style="max-width: 50%; max-height: 80%; margin-left: 5px; margin-top: 3px; position: absolute;">
+            </div>
+            <div class="box" id="smallBox">
+                <div class="bar" id="foodBar"></div>
+                <img src="hamburger.png" style="max-width: 50%; margin-left: 7.5px; margin-top: 6px; position: absolute;">
+            </div>
+            <div class="box" id="smallBox">
+                <div class="bar" id="waterBar"></div>
+                <img src="water.png" style="max-width: 50%; max-height: 60%; margin-left: 8px; margin-top: 6px; position: absolute;">
+            </div>
+            <div class="box" id="smallBox">             
+                <div class="bar" id="oxygenBar"></div>
+                <img src="oxygen.png" style="max-width: 50%; margin-left: 7.5px; margin-top: 6px; position: absolute;">
+            </div>
+            <div class="box" id="smallBox">
+                <div class="bar" id="stressBar"></div>
+                <img src="stress.png" style="max-width: 50%; margin-left: 7.5px; margin-top: 6px; position: absolute;">
+            </div>
+        </div>
+
+        <style>
+            body {
+                margin: 0;
+            }
+
+            .status {
+                position: absolute;
+                bottom: 4px;
+                left: 29px;
+                width: 270px;
+                height: 30px;
+            }
+
+            .box {
+                position: relative;
+                border: 2px solid white;
+                height: 90%;
+                border-radius: 2px;
+                float: left;
+                margin-left: 1px;
+                vertical-align: bottom;
+            }
+
+            .bar {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            #bigBox {
+                width: 60px;
+            }
+
+            #smallBox {
+                width: 30px;
+            }
+
+            #healthBar {
+                background-color: rgb(20, 200, 20);
+            }
+
+            #armorBar {
+                background-color: rgb(0, 152, 212);
+            }
+
+            #foodBar {
+                background-color: rgb(235, 152, 0);
+            }
+
+            #waterBar {
+                background-color: rgb(14, 74, 187);
+            }
+
+            #oxygenBar {
+                background-color: lightskyblue;
+            }
+
+            #stressBar {
+                background-color: rgb(211, 107, 125);
+            }
+        </style>
+
+        <script>
+            window.addEventListener('message', function(event) {
+                let data = event.data;
+
+                if(data.type == 'setHealth') {
+                    let maxHealth = data.maxHealth
+                    let damage = Math.abs(((data.amount - maxHealth) / data.amount) * 100)
+                    
+                    if(!isFinite(damage)) {
+                        damage = 100
+                    }
+
+                    document.getElementById('healthBar').style.width = 100 - damage + '%'
+                }
+            })
+        </script>
+    </body>
+</html>

@@ -10,13 +10,12 @@ files {
     'items/items.js',
 
     --icons
-    'items/combat-pistol.png',
-    'items/carbine-rifle.png'
+    'items/icons/*.png'
 }
 
 client_scripts {    
     'client.lua',
-    '@vd-core/client/functions.lua'
+    -- '@vd-core/client/functions.lua'
 }
 
 server_scripts { 

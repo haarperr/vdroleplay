@@ -3,7 +3,7 @@ body {
 }
 
 .notification {
-    background-color: rgb(34, 122, 190);
+    background-color: rgba(34, 122, 190, 0.8);
     -webkit-text-fill-color: white;
     clear: right;
     float: right;

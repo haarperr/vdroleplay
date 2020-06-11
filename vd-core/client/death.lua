@@ -1,6 +1,6 @@
 
 VDCore.isDead = false
-SetPedDiesWhenInjured(PlayerPedId(), false) -- make sure ped doenst bug when dieing and being revived etc.
+SetPedDiesWhenInjured(PlayerPedId(), false) -- make sure ped doenst bug when dying and being revived etc.
 SetPedRagdollBlockingFlags(PlayerPedId(), 1)
 
 local tempTimer = Config.RespawnTime
@@ -29,15 +29,13 @@ Citizen.CreateThread(function()
 
             if(GetEntityVelocity(pid)[1] == 0 and GetEntityVelocity(pid)[2] == 0 and GetEntityVelocity(pid)[3] == 0) then
 
-                ClearPedTasksImmediately(pid)
-
-                SetEntityHealth(pid, GetEntityMaxHealth(pid))    
-                SetEntityInvincible(pid, true)
+                ClearPedTasksImmediately(pid)   
                 NetworkResurrectLocalPlayer(x, y, z, heading, false, false)
 
                 VDCore.setPedRagdoll(false)
                 VDCore.isDead = true
                 ClearPedTasksImmediately(pid)
+                SetEntityHealth(pid, GetEntityMaxHealth(pid)) 
             
                 VDCore.loadAnim("mini@cpr@char_b@cpr_def")
                 TaskPlayAnim(PlayerPedId(), "mini@cpr@char_b@cpr_def", "cpr_pumpchest_idle", 4.0, 1.0, -1, 1, 0, 0, 0, 0 )
@@ -46,12 +44,14 @@ Citizen.CreateThread(function()
         end
     
         if VDCore.isDead then
+            SetPlayerInvincible(PlayerId(), true)
+
             if tempTimer > 0 then
-                respawnText = VDCore.DrawText2D(0.49, 0.85, "RESPAWN OVER: ~b~ ".. tempTimer .." ~w~SECONDEN")
+                respawnText = VDCore.World.DrawText2D(0.49, 0.85, "RESPAWN OVER: ~b~ ".. tempTimer .." ~w~SECONDEN")
             end
 
             if tempTimer <= 0 then
-                respawnText = VDCore.DrawText2D(0.49, 0.85, "HOUD ~b~E ~w~INGEDRUKT OM TE RESPAWNEN")
+                respawnText = VDCore.World.DrawText2D(0.49, 0.85, "HOUD ~b~E ~w~INGEDRUKT OM TE RESPAWNEN")
 
                 if IsControlPressed(0, 46) then
                     if not gotTempTime then
@@ -59,7 +59,7 @@ Citizen.CreateThread(function()
                         gotTempTime = true
                     end
                     if IsControlPressed(0, 46) and tempTimer - timeNow <= -3 then
-                        VDCore.revive(PlayerPedId())
+                        VDCore.Revive(PlayerPedId())
                         gotTempTime = false
                     end
                 end

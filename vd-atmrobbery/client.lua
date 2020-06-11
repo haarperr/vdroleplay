@@ -15,7 +15,7 @@ RegisterCommand('pos', function()
     print(GetEntityCoords(PlayerPedId()))
     print(GetEntityHeading(PlayerPedId()))
     VDCore.chatNotify('normal', 'Je hebt ' .. cash .. ' euro cash')
-
+    VDCore.Game.Notify('Lolzxd', 'green')
 
 end, false)
 
@@ -78,7 +78,7 @@ Citizen.CreateThread(function()
                 DrawMarker(27, groundMoney[i].x, groundMoney[i].y, groundMoney[i].z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0, 255, 0, 255, false)
 
                 if GetDistanceBetweenCoords(x, y, z, groundMoney[i].x, groundMoney[i].y, groundMoney[i].z, true) <= 2 then
-                    VDCore.DrawText3Ds(groundMoney[i].x, groundMoney[i].y, groundMoney[i].z + 0.2, "~g~E ~w~- Raap geld op")
+                    VDCore.World.DrawText3Ds(groundMoney[i].x, groundMoney[i].y, groundMoney[i].z + 0.2, "~g~E ~w~- Raap geld op")
                 end
             end
         end
@@ -91,7 +91,7 @@ Citizen.CreateThread(function()
 
                     VDCore.startProgressbar("GELD PAKKEN", 1, function(wasCancelled) 
                         if not wasCancelled then 
-                            VDCore.Notify("Je hebt " .. groundMoney[closestGroundMoneyIndex].value .. "euro opgepakt")
+                            VDCore.Game.Notify("Je hebt " .. groundMoney[closestGroundMoneyIndex].value .. "euro opgepakt")
                             cash = cash + groundMoney[closestGroundMoneyIndex].value
                             table.remove(groundMoney, closestGroundMoneyIndex)
                             ClearPedTasks(PlayerPedId())
@@ -154,14 +154,14 @@ AddEventHandler('qb-atmrobbery:client:plantThermite', function()
                     VDCore.startProgressbar("THERMIET PLANTEN", 5, function(wasCancelled) 
                         if not wasCancelled then 
                             TriggerServerEvent('qb-atmrobbery:server:updateATM', closestATMIndex)
-                            VDCore.Notify("Je hebt thermite geplant op de ATM")
+                            VDCore.Game.Notify("Je hebt thermite geplant op de ATM")
                         end
                     end)
                 else 
-                    VDCore.Notify("Er zit al thermiet op deze ATM")
+                    VDCore.Game.Notify("Er zit al thermiet op deze ATM")
                 end
             else 
-                VDCore.Notify("Je kan op het moment geen plofkraak plegen")
+                VDCore.Game.Notify("Je kan op het moment geen plofkraak plegen")
             end
         end
     else 

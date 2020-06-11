@@ -1,4 +1,14 @@
-VDCore = {}
+VDCore = nil
+
+Citizen.CreateThread(function()
+    while true do 
+        while VDCore == nil do
+            TriggerEvent('vd-core:getSharedObject', function(obj) VDCore = obj end)
+            Citizen.Wait(50)
+        end
+    Citizen.Wait(0)
+    end
+end)
 
 local charCam
 function EnableCharUI() 
@@ -64,7 +74,7 @@ RegisterNUICallback("confirmChar", function(charData)
 end)
 
 RegisterNUICallback('error', function() 
-    VDCore.Notify('FILL IN ALL FIELDS >:(')
+    VDCore.Game.Notify('FILL IN ALL FIELDS >:(')
 end)
 
 RegisterNUICallback("playChar", function(data) 

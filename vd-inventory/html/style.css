@@ -6,7 +6,7 @@ body {
 
 .inventoryBody {
     display: none;
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(0, 0, 0, 0.35);
     width: 100%;
     height: 100%;
 }
@@ -20,16 +20,16 @@ body {
 }
    
 ::-webkit-scrollbar-thumb {
-    background-color: white; 
+    background-color: rgb(172, 0, 0); 
 }
   
 ::-webkit-scrollbar-thumb:hover {
-    background: rgb(190, 190, 190); 
+    background: rgb(136, 0, 0); 
 }
 
 .inventory {
-    height: 60%;
-    width: 37.5%;
+    height: 50%;
+    width: 35%;
     border: none;
     overflow-y: scroll;
     box-sizing: border-box;
@@ -39,36 +39,44 @@ body {
     display: inline-block;
     height: 29%;
     width: 18.6%;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     margin-left: 0.5%;
     margin-top: 0.3%;
-    background-color: rgba(65, 73, 90, 0.349);
+    background-color: rgba(47, 66, 59, 0.15);
     /*background-image: url(cursor.png);*/
     background-size: 100%;
     background-repeat: no-repeat;
     vertical-align: bottom;
     position: relative;
-    background-position: 3px 15px;
     user-select: none;
+    background-position-y: 30%;
+}
+
+.inventorybox:hover {
+    background-color: rgba(47, 66, 59, 0.35);
+}
+
+#externalInventory > .inventorybox:hover {
+    background-color: rgba(71, 29, 29, 0.35);
+}
+
+#externalInventory > .inventorybox {
+    background-color: rgba(71, 29, 29, 0.20);
 }
 
 .button {
     text-align: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: white;
-    width: 10%;
+    width: 9%;
     height: 4%;
-    background-color: rgba(65, 73, 90, 0.349);
-    margin-left: 44.3%;
+    background-color: rgba(151, 18, 18, 0.35);
+    margin-left: 45%;
     margin-top: 20%;
     position: absolute;
     border: none;
-    outline-color: rgba(65, 73, 90, 0.5);
+    outline-color: rgba(190, 8, 8, 0.5);
     user-select: none;
-}
-
-.inventorybox:hover {
-    background-color: rgba(65, 73, 90, 0.5);
 }
 
 .itemtext {
@@ -80,7 +88,7 @@ body {
     font-size: 70%;
     width: 100%;
     height: 11%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(22, 11, 11, 0.5);
     position: absolute;
     bottom: 0;
     user-select: none;
@@ -108,8 +116,8 @@ body {
 
 #quickSlotInfo {
     position: absolute;
-    width: 135px;
-    height: 190px;
+    width: 125px;
+    height: 160px;
     margin-left: 46%;
     margin-top: 40%;
     animation: fade 2s linear forwards;
@@ -121,7 +129,7 @@ body {
     width: 30%;
     height: 17%;
     margin-left: 33.5%;
-    margin-top: 44.2%;
+    margin-top: 40%;
     padding: 1%;
 }
 
@@ -138,30 +146,31 @@ body {
 }
 
 #player {
-    margin-top: 3.5%;
-    margin-left: 5.2%;
+    margin-top: 6%;
+    margin-left: 7.8%;
     position: absolute;
-    font-weight: 530;
+    font-weight: bold;
 }
 
 #personalTotalWeight {
     position: absolute;
-    font-size: 75%;
-    margin-top: 6%;
-    margin-left: 5.2%;
+    font-size: 65%;
+    margin-top: 8%;
+    margin-left: 7.8%;
 }
 
 #external {
-    margin-top: 3.5%;
+    margin-top: 6%;
     margin-left: 57.7%;
     position: absolute;
+    font-weight: bold;
 }
 
 #externalTotalWeight {
     position: absolute;
-    font-size: 75%;
+    font-size: 65%;
     font-weight: 200;
-    margin-top: 6%;
+    margin-top: 8%;
     margin-left: 57.7%;
 }
 
@@ -170,8 +179,8 @@ body {
     padding-top: 1%;
 }
 
-#use:hover {
-    background-color: rgba(65, 73, 90, 0.5);
+.button:hover {
+    background-color: rgba(128, 15, 15, 0.35);
 }
 
 #quantity {
@@ -181,15 +190,15 @@ body {
 #personalInventory {
     float: left;
     clear: left;
-    margin-left: 5%;
-    margin-top: 8%;
+    margin-left: 7.5%;
+    margin-top: 10%;
 }
 
 #externalInventory {
     float: right;
     clear: right;
-    margin-right: 5%;
-    margin-top: 8%;
+    margin-right: 7.5%;
+    margin-top: 10%;
 }
 
 .quickSlot {

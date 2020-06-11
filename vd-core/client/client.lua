@@ -1,28 +1,18 @@
-TriggerEvent('chat:addSuggestion', '/giveitem', 'Give an item to a player', {
-    { name="id", help="The ID of the target player" },
-    { name="item", help="The item you want to give" },
-    { name="quantity", help="How many you want to give of that item" }
-})
+alwaysShowPlayernames = false
 
-Citizen.CreateThread(function() 
-    while true do
-        HideHudComponentThisFrame(19)
-        DisableControlAction(1, 37, false)
-        Wait(0)
-    end
-end)
-
-
+function togglePlayernames() 
+    alwaysShowPlayernames = not alwaysShowPlayernames
+end
 
 --Scoreboard
 Citizen.CreateThread(function() 
-    isControlBeingHeld = false;
+    local isControlBeingHeld = false;
 
     while true do
-        if IsControlPressed(0, 212) then
+        if IsControlPressed(0, 212) or alwaysShowPlayernames then
             isControlBeingHeld = true;
 
-            if isControlBeingHeld then
+            if isControlBeingHeld or alwaysShowPlayernames then
                 closestPlayers = VDCore.GetClosestPlayers()
 
                 for i in pairs(closestPlayers) do
@@ -31,7 +21,11 @@ Citizen.CreateThread(function()
                     local id = GetPlayerServerId(playerid)
                     local tx, ty, tz = table.unpack(GetEntityCoords(target))
                     
-                    VDCore.DrawText3Ds(tx, ty, tz + 1, '[' .. id .. ']')
+                    if not alwaysShowPlayernames then
+                        VDCore.World.DrawText3Ds(tx, ty, tz + 1, '[' .. id .. ']')
+                    else 
+                        VDCore.World.DrawText3Ds(tx, ty, tz + 1, '[' .. id .. '] ' .. GetPlayerName(closestPlayers[i]))
+                    end
                 end
             end
         end
@@ -98,9 +92,10 @@ AddEventHandler('vd-core:sendChatMessage', function(type, author, message)
 end)
 
 RegisterNetEvent('vd-core:notify')
-AddEventHandler('vd-core:notify', function(msg) 
+AddEventHandler('vd-core:notify', function(msg, type) 
     SendNUIMessage({
         type = 'notify',
-        message = msg
+        message = msg,
+        color = type
     })
 end)
