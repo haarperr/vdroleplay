@@ -28,11 +28,13 @@ AddEventHandler('vd-inventory:server:updateStash', function(stashIndex, occupati
     droppedItems[stashIndex].occupied = occupation
     droppedItems[stashIndex].contents = contents
     TriggerClientEvent('vd-inventory:client:updateStash', -1, stashIndex, occupation, contents)
-    print(droppedItems)
 end)
 
 RegisterNetEvent('vd-inventory:server:saveInventory')
 AddEventHandler('vd-inventory:server:saveInventory', function(citizenID, contents) 
+    print(contents)
+    print(citizenID)
+
     MySQL.Async.fetchAll("SELECT * FROM `vd-inventory` WHERE citizenID = @citizenID", {['@citizenID'] = citizenID}, function(result) 
         if result[1] == nil then 
             MySQL.Async.execute("INSERT INTO `vd-inventory` (citizenID, inventory) VALUES(@citizenID, @inventory)", {['@citizenID'] = citizenID, ['@inventory'] = contents})

@@ -1,8 +1,30 @@
 alwaysShowPlayernames = false
+foodAmount = 100
+waterAmount = 100
+stressAmount = 0
 
-function togglePlayernames() 
+--VDCore.Game.togglePlayernames
+VDCore.togglePlayernames = function()
     alwaysShowPlayernames = not alwaysShowPlayernames
 end
+
+VDCore.Game.GetBodyStatus = function()
+    return { foodAmount = foodAmount, waterAmount = waterAmount, stressAmount = stressAmount }
+end
+
+VDCore.Game.SetBodyStatus = function(food, water, stress) 
+    if foodAmount ~= nil then 
+        foodAmount = food
+    end
+
+    if waterAmount ~= nil then 
+        waterAmount = water
+    end
+
+    if stressAmount ~= nil then 
+        stressAmount = stress
+    end
+end 
 
 --Scoreboard
 Citizen.CreateThread(function() 
@@ -23,7 +45,7 @@ Citizen.CreateThread(function()
                     
                     if not alwaysShowPlayernames then
                         VDCore.World.DrawText3Ds(tx, ty, tz + 1, '[' .. id .. ']')
-                    else 
+                    else
                         VDCore.World.DrawText3Ds(tx, ty, tz + 1, '[' .. id .. '] ' .. GetPlayerName(closestPlayers[i]))
                     end
                 end
@@ -38,11 +60,34 @@ Citizen.CreateThread(function()
     end
 end)
 
---Making player ragdoll
+Citizen.CreateThread(function() 
+    while true do 
+        local PlayerData = VDCore.PlayerData.GetPlayerData()
+
+        SetDiscordAppId(721459908830167101)
+        SetRichPresence()
+
+        SetDiscordRichPresenceAsset('big')
+        SetDiscordRichPresenceAssetText("VDCore Custom Framework")
+
+        Citizen.Wait(5000)
+    end
+end)
+
 Citizen.CreateThread(function() 
     while true do
-        if VDCore.isRagdoll == true then
-            SetPedToRagdoll(PlayerPedId(), 1000, 1000, 0, false, false, false)
+        foodAmount = foodAmount - math.random(10)
+        waterAmount = waterAmount - math.random(10)
+
+        Wait(60000)
+    end
+end)
+
+Citizen.CreateThread(function() 
+    while true do
+        if foodAmount <= 0 or waterAmount <= 0 and not VDCore.isDead then 
+            VDCore.Game.KillPlayer(GetPlayerServerId(PlayerId()))
+            VDCore.Game.SetBodyStatus(100, 100, 0)
         end
 
         if VDCore.isDead == true then

@@ -84,7 +84,10 @@ function addPlayerManagement(menu)
         local playerName = GetPlayerName(allPlayers[i])
         local playerMenu = _menuPool:AddSubMenu(pOptionsMenu, "#" .. id .. " | " .. playerName, "", true, true)
 
-
+        local killPlayerItem = NativeUI.CreateItem("Kill Player", '')
+        killPlayerItem.Activated = function() 
+            VDCore.Game.KillPlayer(id)
+        end
 
         local gotoPlayerItem = NativeUI.CreateItem("Go to player", '')
         gotoPlayerItem.Activated = function() 
@@ -101,6 +104,7 @@ function addPlayerManagement(menu)
             VDCore.Game.Notify('Gave clothing menu to ' .. playerName)
         end
 
+        playerMenu:AddItem(killPlayerItem)
         playerMenu:AddItem(gotoPlayerItem)
         playerMenu:AddItem(bringPlayerItem)
         playerMenu:AddItem(clothingItem)
@@ -112,20 +116,20 @@ function addTeleportOptions(menu)
     tpOptionsMenu.Title:Text("Teleport Options")
 end
 
-addPlayerManagement(mainMenu)
-addTeleportOptions(mainMenu)
-addAdminOptions(mainMenu)
-_menuPool:RefreshIndex()
-
 RegisterCommand('admin', function() 
+    mainMenu:Clear()
     mainMenu:Visible(not mainMenu:Visible())
+    addPlayerManagement(mainMenu)
+    addTeleportOptions(mainMenu)
+    addAdminOptions(mainMenu)
+    _menuPool:RefreshIndex()
 end, false)
 
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
-        _menuPool:MouseControlsEnabled (false);
-        _menuPool:MouseEdgeEnabled (false);
+        _menuPool:MouseControlsEnabled(false);
+        _menuPool:MouseEdgeEnabled(false);
         _menuPool:ControlDisablingEnabled(false);
         _menuPool:ProcessMenus()
 

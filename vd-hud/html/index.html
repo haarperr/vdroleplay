@@ -3,30 +3,60 @@
         <meta charset="utf-8">
     </head>
     <body>
-        <div class="status">
+        <div id="status">
             <div class="box" id="bigBox">
                 <div class="bar" id="healthBar"></div>
-                <img src="heart.png" style="max-width: 25%; margin-left: 6px; margin-top: 6px; position: absolute;">
+                <img src="../html/icons/heart.png" style="max-width: 25%; margin-left: 10%; margin-top: 10%; position: absolute;">
             </div>
             <div class="box" id="bigBox">
                 <div class="bar" id="armorBar"></div>
-                <img src="armor.png" style="max-width: 50%; max-height: 80%; margin-left: 5px; margin-top: 3px; position: absolute;">
+                <img src="./icons/armor.png" style="max-width: 50%; max-height: 80%; margin-left: 8%; margin-top: 5%; position: absolute;">
             </div>
             <div class="box" id="smallBox">
                 <div class="bar" id="foodBar"></div>
-                <img src="hamburger.png" style="max-width: 50%; margin-left: 7.5px; margin-top: 6px; position: absolute;">
+                <img src="./icons/hamburger.png" style="max-width: 60%; margin-left: 20%; margin-top: 15%; position: absolute;">
             </div>
             <div class="box" id="smallBox">
                 <div class="bar" id="waterBar"></div>
-                <img src="water.png" style="max-width: 50%; max-height: 60%; margin-left: 8px; margin-top: 6px; position: absolute;">
+                <img src="./icons/water.png" style="max-width: 50%; max-height: 60%; margin-left: 25%; margin-top: 20%; position: absolute;">
             </div>
             <div class="box" id="smallBox">             
                 <div class="bar" id="oxygenBar"></div>
-                <img src="oxygen.png" style="max-width: 50%; margin-left: 7.5px; margin-top: 6px; position: absolute;">
+                <img src="./icons/oxygen.png" style="max-width: 50%; margin-left: 30%; margin-top: 20%; position: absolute;">
             </div>
             <div class="box" id="smallBox">
                 <div class="bar" id="stressBar"></div>
-                <img src="stress.png" style="max-width: 50%; margin-left: 7.5px; margin-top: 6px; position: absolute;">
+                <img src="./icons/stress.png" style="max-width: 50%; margin-left: 25%; margin-top: 20%; position: absolute;">
+            </div>
+        </div>
+
+        <div id="vehiclehud">
+            <div id="time">
+                <span class='amount' id="timeAmount">17:00</span>
+            </div>
+
+            <div class="indicator" id="fuel">
+                <span class='amount' id="fuelLevel">100</span>
+                <span class='label' id="fuelLabel">Fuel</span>
+            </div>
+
+            <div class="indicator" id="kilometer">
+                <span class='amount' id="kmLevel">100</span>
+                <span class='label' id="kmLabel">KMH</span>
+            </div>
+
+            <div class="indicator" id="nitrous">
+                <span class='amount' id="nosLevel">0</span>
+                <span class='label' id="nosLabel">NOS</span>
+            </div>
+
+            <div class="indicator" id="seatbelt">
+                <img src="./icons/seatbelt-loose.png" id="loose" style="max-width: 100%; position: absolute;">
+                <img src="./icons/seatbelt-fixed.png" id="fixed" style="max-width: 100%; position: absolute; display: none;">
+            </div>
+
+            <div id="streetname">
+                Goeie straatnaam pikkie | Goeie kruispunt pikkebaas | Zieke Regio Oulleh
             </div>
         </div>
 
@@ -35,22 +65,28 @@
                 margin: 0;
             }
 
-            .status {
-                position: absolute;
-                bottom: 4px;
-                left: 29px;
-                width: 270px;
-                height: 30px;
+            .label {
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 80%;
+                font-weight: bolder;
+                vertical-align: top;
+            }
+
+            .amount {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 110%;
+                font-weight: bold;
             }
 
             .box {
                 position: relative;
-                border: 2px solid white;
-                height: 90%;
+                border: 0.1vw solid white;
+                height: 80%;
                 border-radius: 2px;
                 float: left;
-                margin-left: 1px;
+                margin-left: 0.5%;
                 vertical-align: bottom;
+                
             }
 
             .bar {
@@ -58,14 +94,77 @@
                 bottom: 0;
                 width: 100%;
                 height: 100%;
+                transition: width 1s;
+            }
+
+            .indicator {
+                height: 30%;
+                margin-top: 4.5%;
+                margin-left: 2%;
+                display: inline-block;
+            }
+
+            .beltIcon {
+                position: absolute;
+            }
+
+            #time {
+                top: 0;
+                width: 10%;
+                height: 30%;
+                position: absolute;
+                float: left;
+            }
+
+            #seatbelt {
+                position: absolute;
+                /* float: left; */
+                display: inline-block;
+                height: 35%;
+                width: 4%;
+                margin-top: 3.5%;
+            }
+
+            #fuel {
+                margin-left: 0;
+            }
+
+            #vehiclehud {
+                position: absolute;
+                bottom: 0.3vw;
+                left: 16.5%;
+                height: 8%;
+                width: 40%;
+                color: white;
+                transition: display 2s;
+            }
+
+            #status {
+                position: absolute;
+                bottom: 0.2vw;
+                left: 1.5%;
+                width: 15%;
+                height: 3%;
+            }
+
+            #streetname {
+                position: absolute;
+                width: 100%;
+                height: 30%;
+                bottom: -6%;
+
+                color: white;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 105%;
+                font-weight: bold;
             }
 
             #bigBox {
-                width: 60px;
+                width: 21%;
             }
 
             #smallBox {
-                width: 30px;
+                width: 10.3%;
             }
 
             #healthBar {
@@ -82,6 +181,8 @@
 
             #waterBar {
                 background-color: rgb(14, 74, 187);
+                margin-left: 1px;
+                width: 95%;
             }
 
             #oxygenBar {
@@ -89,23 +190,69 @@
             }
 
             #stressBar {
-                background-color: rgb(211, 107, 125);
+                background-color: rgb(255, 131, 152);
             }
         </style>
 
         <script>
+            Number.prototype.pad = function(n) {
+                return new Array(n).join('0').slice((n || 2) * -1) + this;
+            }
+
             window.addEventListener('message', function(event) {
                 let data = event.data;
 
-                if(data.type == 'setHealth') {
+                if(data.type == 'setValues') {
                     let maxHealth = data.maxHealth
-                    let damage = Math.abs(((data.amount - maxHealth) / data.amount) * 100)
-                    
+                    let damage = Math.abs(((data.healthAmount - maxHealth) / data.healthAmount) * 100)
+
                     if(!isFinite(damage)) {
                         damage = 100
                     }
 
+                    if(data.isInVehicle) {
+                        document.getElementById('vehiclehud').style.display = 'block'
+                    } else {
+                        document.getElementById('vehiclehud').style.display = 'none'
+                    }
+
+                    document.getElementById('armorBar').style.width = data.armorAmount + "%"
                     document.getElementById('healthBar').style.width = 100 - damage + '%'
+                    document.getElementById('foodBar').style.height = data.foodAmount + '%'
+                    document.getElementById('waterBar').style.height = data.waterAmount + '%'
+                    document.getElementById('stressBar').style.height = data.stressAmount + '%'
+                    document.getElementById('oxygenBar').style.height = data.oxygenAmount * 10 + '%'
+
+                    document.getElementById('fuelLevel').innerHTML = data.fuelLevel
+                    document.getElementById('kmLevel').innerHTML = data.kilometerSpeed.toFixed(0)
+                    document.getElementById('timeAmount').innerHTML = parseInt(data.time.split(':')[0]).pad() + ':' + parseInt(data.time.split(':')[1]).pad()
+                    
+
+                    data.crossingRoad != "" ? document.getElementById('streetname').innerHTML = data.currentRoad + " | " + data.crossingRoad + " | " + data.currentZone : document.getElementById('streetname').innerHTML = data.currentRoad + " | " + data.currentZone
+                }
+
+                if(data.type == 'toggleSeatbelt') {
+                    let audioPlayer = null
+
+                    if(audioPlayer != null) {
+                        audioPlayer.pause()
+                    }      
+
+                    if(document.getElementById('fixed').style.display == 'block') {
+                        audioPlayer = new Audio('sounds/unbuckle.ogg')
+                        audioPlayer.volume = 0.9
+                        audioPlayer.play()
+
+                        document.getElementById('loose').style.display = 'block'
+                        document.getElementById('fixed').style.display = 'none'
+                    } else {
+                        audioPlayer = new Audio('sounds/buckle.ogg')
+                        audioPlayer.volume = 0.9
+                        audioPlayer.play()
+
+                        document.getElementById('fixed').style.display = 'block'
+                        document.getElementById('loose').style.display = 'none'
+                    }
                 }
             })
         </script>

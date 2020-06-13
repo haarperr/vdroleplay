@@ -11,7 +11,7 @@ AddEventHandler('vd-multicharacter:getCurrentPlayerData', function(target, charS
     playerName = GetPlayerName(source) 
     MySQL.Async.fetchAll("SELECT * FROM `vd-characters` WHERE name = @name AND charSlot = @charSlot", {["@name"] = playerName, ["@charSlot"] = charSlot}, 
     function(result) 
-        TriggerClientEvent('vd-multicharacter:recieveCurrentPlayerData', tonumber(target), result[1])
+        TriggerClientEvent('vd-core:recieveCurrentPlayerData', tonumber(target), result[1])
     end)
 end)
 

@@ -459,6 +459,8 @@ function setTotalWeight() {
 }
 
 function registerPersonalInventory() {
+    createPersonalInventory()
+
     currentPersonalInventory = []
 
     let currentInventory = [];
@@ -484,6 +486,9 @@ function registerPersonalInventory() {
     $.post("http://vd-inventory/saveInventory", JSON.stringify({
         contents: currentPersonalInventory.toString().replace(/},/g, '}|')
     }))
+    console.log(currentPersonalInventory)
+
+    removePersonalInventory()
 }
 
 function registerExternalInventory() {

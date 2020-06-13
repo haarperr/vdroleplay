@@ -61,6 +61,11 @@ AddEventHandler('vd-core:sendOocMessage', function(author, message, closestPlaye
     end
 end)
 
+RegisterNetEvent('vd-core:server:killPlayer')
+AddEventHandler('vd-core:server:killPlayer', function(playerId) 
+    TriggerClientEvent('vd-core:client:killPlayer', playerId)
+end)
+
 AddEventHandler('chatMessage', function() 
     CancelEvent() 
 end)

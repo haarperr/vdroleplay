@@ -94,6 +94,7 @@ Citizen.CreateThread(function()
                             VDCore.Game.Notify("Je hebt " .. groundMoney[closestGroundMoneyIndex].value .. "euro opgepakt")
                             cash = cash + groundMoney[closestGroundMoneyIndex].value
                             table.remove(groundMoney, closestGroundMoneyIndex)
+                            TriggerServerEvent('vd-atmrobbery:server:updateGroundMoney', groundMoney)
                             ClearPedTasks(PlayerPedId())
                         end
                     end)
@@ -128,8 +129,14 @@ Citizen.CreateThread(function()
                                 AddExplosion(x, y, z, 'EXPLOSION_GRENADE', 0, true, true, true)
                                 AddExplosion(x, y, z, 'EXPLOSION_BZGAS', 0, true, false, false)
                                 
-                                TriggerServerEvent('qb-atmrobbery:server:updateATM', closestATMIndex) 
-                                TriggerServerEvent('qb-atmrobbery:server:createGroundMoney', GetOffsetFromEntityInWorldCoords(veh, 0.0, -2.5, 0.0), closestATMIndex)
+                                TriggerServerEvent('vd-atmrobbery:server:updateATM', closestATMIndex)
+                                local x,y,z = table.unpack(GetOffsetFromEntityInWorldCoords(veh, 0.0, -2.5, 0.0))
+                                for i=0, 30 do
+                                    local found,groundZ = GetGroundZFor_3dCoord(ATMs[closestATMIndex].x, ATMs[closestATMIndex].y, ATMs[closestATMIndex].z, 0)
+                                    local newGroundMoney = {x = x + (math.random(-100, 100) / 10), y = y + (math.random(-30, 0) / 10), z = groundZ + 0.1, value = math.random(20, 250)}
+                                    table.insert(groundMoney, newGroundMoney)
+                                end
+                                TriggerServerEvent('vd-atmrobbery:server:updateGroundMoney', groundMoney)
                             end
                         end
                     end
@@ -144,8 +151,8 @@ Citizen.CreateThread(function()
     end
 end)
 
-RegisterNetEvent('qb-atmrobbery:client:plantThermite')
-AddEventHandler('qb-atmrobbery:client:plantThermite', function() 
+RegisterNetEvent('vd-atmrobbery:client:plantThermite')
+AddEventHandler('vd-atmrobbery:client:plantThermite', function() 
     if not IsPedInAnyVehicle(PlayerPedId(), false) then
         local closestATMDistance,closestATMIndex = getClosestATM()
         if closestATMDistance ~= nil and closestATMDistance <= 2 then
@@ -153,7 +160,7 @@ AddEventHandler('qb-atmrobbery:client:plantThermite', function()
                 if ATMs[closestATMIndex].isThermiteActive == false then
                     VDCore.startProgressbar("THERMIET PLANTEN", 5, function(wasCancelled) 
                         if not wasCancelled then 
-                            TriggerServerEvent('qb-atmrobbery:server:updateATM', closestATMIndex)
+                            TriggerServerEvent('vd-atmrobbery:server:updateATM', closestATMIndex)
                             VDCore.Game.Notify("Je hebt thermite geplant op de ATM")
                         end
                     end)
@@ -169,8 +176,8 @@ AddEventHandler('qb-atmrobbery:client:plantThermite', function()
     end
 end)
 
-RegisterNetEvent('qb-atmrobbery:client:updateATM')
-AddEventHandler('qb-atmrobbery:client:updateATM', function(ATMIndex) 
+RegisterNetEvent('vd-atmrobbery:client:updateATM')
+AddEventHandler('vd-atmrobbery:client:updateATM', function(ATMIndex) 
     if ATMs[ATMIndex].isThermiteActive == false then
         ATMs[ATMIndex].isThermiteActive = true
     else 
@@ -180,12 +187,7 @@ AddEventHandler('qb-atmrobbery:client:updateATM', function(ATMIndex)
     currentBlastCooldown = defaultBlastCooldown
 end)
 
-RegisterNetEvent('qb-atmrobbery:client:createGroundMoney')
-AddEventHandler('qb-atmrobbery:client:createGroundMoney', function(loc, ATMIndex) 
-    local x,y,z = table.unpack(loc)
-    for i=0, 30 do
-        local found,groundZ = GetGroundZFor_3dCoord(ATMs[ATMIndex].x, ATMs[ATMIndex].y, ATMs[ATMIndex].z, 0)
-        local newGroundMoney = {x = x + (math.random(-100, 100) / 10), y = y + (math.random(-30, 0) / 10), z = groundZ + 0.1, value = math.random(20, 250)}
-        table.insert(groundMoney, newGroundMoney)
-    end
+RegisterNetEvent('vd-atmrobbery:client:updateGroundMoney')
+AddEventHandler('vd-atmrobbery:client:updateGroundMoney', function(newGroundMoney) 
+    groundMoney = newGroundMoney
 end)

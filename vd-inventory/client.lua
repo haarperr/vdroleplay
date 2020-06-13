@@ -61,12 +61,6 @@ RegisterCommand('giveitem', function(source, args)
     end
 end, false)
 
-RegisterCommand('clearinv', function(source, args) 
-    SendNUIMessage({
-        type = "clearInventory"
-    })
-end, false)
-
 RegisterNUICallback('dropItem', function(data) 
     local stash = {x = "0.0", y = "0.0", z = "0.0", contents = "", id = "", occupied = true}
     stash.contents = data.contents
@@ -114,11 +108,11 @@ RegisterNUICallback('closeInv', function(data)
 end)
 
 RegisterNUICallback('saveInventory', function(data) 
-    TriggerServerEvent('vd-inventory:server:saveInventory', VDCore.PlayerData.citizenID, data.contents)
+    TriggerServerEvent('vd-inventory:server:saveInventory', VDCore.PlayerData.GetPlayerData().citizenID, data.contents)
 end)
 
 RegisterNUICallback('useThermite', function(data) 
-    TriggerEvent('qb-atmrobbery:client:plantThermite')
+    TriggerEvent('vd-atmrobbery:client:plantThermite')
 end)
 
 RegisterNUICallback('useWeapon', function(data) 
@@ -177,6 +171,7 @@ RegisterNetEvent('vd-inventory:client:updateStash')
 AddEventHandler('vd-inventory:client:updateStash', function(stashIndex, occupation, contents) 
     droppedItems[stashIndex].occupied = occupation
     droppedItems[stashIndex].contents = contents
+    print(tostring(occupation) .. 'lol')
 end)
 
 AddEventHandler('playerSpawned', function() 
@@ -248,11 +243,12 @@ Citizen.CreateThread(function()
 
             if(closestDroppedItemDistance ~= nil and closestDroppedItemIndex ~= nil and not IsPedInAnyVehicle(PlayerPedId(), true)) and GetVehicleNumberPlateText(VDCore.getClosestVehicle(5.0)) == nil then 
                 if closestDroppedItemDistance <= 2 and droppedItems[closestDroppedItemIndex].occupied == false then 
+                    print(droppedItems[closestDroppedItemIndex].occupied)
                     SendNUIMessage({
                         type = 'showInv',
                         inventoryData = droppedItems[closestDroppedItemIndex]
                     })
-                    TriggerServerEvent('vd-inventory:client:updateStash', closestDroppedItemIndex, true, droppedItems[closestDroppedItemIndex].contents)
+                    TriggerServerEvent('vd-inventory:server:updateStash', closestDroppedItemIndex, true, droppedItems[closestDroppedItemIndex].contents)
                 else
                     SendNUIMessage({
                         type = 'showInv',
@@ -275,7 +271,7 @@ Citizen.CreateThread(function()
                             inventoryData = droppedItems[index],
                             vehicleData = GetVehicleNumberPlateText(GetVehiclePedIsIn(PlayerPedId(), false))
                         })
-                        TriggerServerEvent('vd-inventory:client:updateStash', index, true, droppedItems[index].contents)
+                        TriggerServerEvent('vd-inventory:server:updateStash', index, true, droppedItems[index].contents)
                     else
                         SendNUIMessage({
                             type = 'showInv',
@@ -307,7 +303,7 @@ Citizen.CreateThread(function()
                                     inventoryData = droppedItems[index],
                                     vehiclePlate = GetVehicleNumberPlateText(VDCore.getClosestVehicle(5.0))
                                 })
-                                TriggerServerEvent('vd-inventory:client:updateStash', index, true, droppedItems[index].contents)
+                                TriggerServerEvent('vd-inventory:server:updateStash', index, true, droppedItems[index].contents)
                             else 
                                 SendNUIMessage({
                                     type = 'showInv',

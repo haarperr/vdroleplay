@@ -4,5 +4,9 @@ client_script 'client.lua'
 server_script 'server.lua'
 
 files {
-    'html/*'
+    'html/index.html',
+    'html/icons/*.png',
+    'html/sounds/*.ogg'
 }
+
+dependency 'vd-core'

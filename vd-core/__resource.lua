@@ -14,9 +14,10 @@ client_scripts {
     
     --scripts
     'client/functions.lua',
+    'client/common.lua',
     'client/client.lua',
-    'client/death.lua',
-    'client/permissions.lua',
+    'client/modules/death.lua',
+    'client/modules/permissions.lua',
 
     --language
     'lang/en-US.lua',

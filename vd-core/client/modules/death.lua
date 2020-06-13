@@ -1,7 +1,15 @@
-
 VDCore.isDead = false
-SetPedDiesWhenInjured(PlayerPedId(), false) -- make sure ped doenst bug when dying and being revived etc.
-SetPedRagdollBlockingFlags(PlayerPedId(), 1)
+
+--VDCore.Game.Revive
+VDCore.Revive = function(ped)
+    VDCore.isDead = false
+    ClearPedTasksImmediately(ped)
+    SetEntityHealth(PlayerPedId(), GetEntityMaxHealth(PlayerPedId()))
+    SetPlayerInvincible(PlayerId(), false)
+    ClearPedBloodDamage(ped)
+
+    VDCore.Game.SetBodyStatus(100, 100, 0)
+end
 
 local tempTimer = Config.RespawnTime
 Citizen.CreateThread(function() 
@@ -47,11 +55,9 @@ Citizen.CreateThread(function()
             SetPlayerInvincible(PlayerId(), true)
 
             if tempTimer > 0 then
-                respawnText = VDCore.World.DrawText2D(0.49, 0.85, "RESPAWN OVER: ~b~ ".. tempTimer .." ~w~SECONDEN")
-            end
-
-            if tempTimer <= 0 then
-                respawnText = VDCore.World.DrawText2D(0.49, 0.85, "HOUD ~b~E ~w~INGEDRUKT OM TE RESPAWNEN")
+                VDCore.World.DrawText2D(0.49, 0.85, "RESPAWN OVER: ~b~ ".. tempTimer .." ~w~SECONDEN", 4)
+            else
+                VDCore.World.DrawText2D(0.49, 0.85, "HOUD ~b~E ~w~INGEDRUKT OM TE RESPAWNEN", 4)
 
                 if IsControlPressed(0, 46) then
                     if not gotTempTime then

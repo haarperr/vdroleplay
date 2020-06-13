@@ -23,8 +23,8 @@ VDCore.World.DrawText3Ds = function(x, y, z, text)
     ClearDrawOrigin()
 end
 
-VDCore.World.DrawText2D = function(x, y, text)
-    SetTextFont(4)
+VDCore.World.DrawText2D = function(x, y, text, font)
+    SetTextFont(font)
     SetTextProportional(1)
     SetTextScale(0.6, 0.6)
     SetTextCentre(true)
@@ -35,6 +35,10 @@ VDCore.World.DrawText2D = function(x, y, text)
     SetTextEntry("STRING")
     AddTextComponentString(text)
     EndTextCommandDisplayText(x, y)
+end
+
+VDCore.PlayerData.GetPlayerData = function() 
+    return VDCore.PlayerData
 end
 
 VDCore.Game.Notify = function(msg, type)
@@ -63,21 +67,13 @@ VDCore.getClosestVehicle = function(radius)
     return vehicleHandle
 end
 
-VDCore.isRagdoll = false
+local isRagdoll = false
 VDCore.setPedRagdoll = function(bool) 
-    if bool then
-        VDCore.isRagdoll = true
-    else 
-        VDCore.isRagdoll = false
-    end
+    isRagdoll = bool
 end
 
---VDCore.Game.Revive
-VDCore.Revive = function(ped)
-    VDCore.isDead = false
-    ClearPedTasksImmediately(ped)
-    SetEntityHealth(PlayerPedId(), GetEntityMaxHealth(PlayerPedId()))
-    ClearPedBloodDamage(ped)
+VDCore.Game.KillPlayer = function(playerid) 
+    TriggerServerEvent('vd-core:server:killPlayer', playerid)
 end
 
 --VDCore.World.GetPlayers
@@ -91,12 +87,6 @@ VDCore.GetPlayers = function()
     end
 
     return players
-end
-
---VDCore.Game.togglePlayernames
-VDCore.togglePlayernames = function()
-    print('test')
-    togglePlayernames()
 end
 
 --VDCore.World.GetClosestPlayers
@@ -194,9 +184,17 @@ VDCore.createObject = function(object_model)
     end
 end
 
-RegisterNetEvent('vd-multicharacter:recieveCurrentPlayerData')
-AddEventHandler('vd-multicharacter:recieveCurrentPlayerData', function(data) 
-    VDCore.PlayerData = {firstName, lastName, birthDate, gender, nationality, job, cashAmount, bankAmount, phoneNumber, accountNumber, citizenID}
+RegisterNetEvent('vd-core:client:killPlayer')
+AddEventHandler('vd-core:client:killPlayer', function() 
+    SetEntityHealth(PlayerPedId(), 0)
+end)
+
+RegisterNetEvent('vd-core:recieveCurrentPlayerData')
+AddEventHandler('vd-core:recieveCurrentPlayerData', function(data) 
+    if(VDCore.PlayerData == {}) then 
+        VDCore.PlayerData = {firstName, lastName, birthDate, gender, nationality, job, cashAmount, bankAmount, phoneNumber, accountNumber, citizenID}
+    end
+
     VDCore.PlayerData.firstName = data.firstName
     VDCore.PlayerData.lastName = data.lastName
     VDCore.PlayerData.birthDate = data.birthDate
@@ -208,9 +206,4 @@ AddEventHandler('vd-multicharacter:recieveCurrentPlayerData', function(data)
     VDCore.PlayerData.phoneNumber = data.phoneNumber
     VDCore.PlayerData.accountNumber = data.accountNumber
     VDCore.PlayerData.citizenID = data.citizenID
-end)
-
-RegisterNetEvent('vd-core:getSharedObject')
-AddEventHandler('vd-core:getSharedObject', function(cb) 
-    cb(VDCore)
 end)
